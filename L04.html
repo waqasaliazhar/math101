@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 101 — Lecture 04: Limits</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#faf8f4;--bg-warm:#f5f0e8;--bg-card:#fff;--bg-def:#eef4fb;--bg-example:#f0faf4;
+  --bg-exercise:#fef7f0;--bg-widget:#f8f5ff;--bg-aside:#fdf6ec;--bg-fun:#fef8f0;
+  --text:#2a2520;--text-muted:#6b6360;--text-light:#918a85;
+  --accent:#c0543a;--accent-light:#e8a892;--blue:#3a6ea5;--blue-light:#d0e2f4;
+  --green:#3a7a54;--green-light:#d4eddc;--orange:#c47a20;--orange-light:#fae5c8;
+  --purple:#6a4c93;--purple-light:#e8ddf5;--teal:#2a8a8a;--teal-light:#d0f0f0;
+  --border:#e0dbd5;--border-light:#ece8e2;
+  --shadow-sm:0 1px 3px rgba(42,37,32,0.06);--shadow-md:0 4px 12px rgba(42,37,32,0.08);
+  --shadow-lg:0 8px 30px rgba(42,37,32,0.1);--radius:10px;--radius-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Crimson Pro',Georgia,serif;font-size:19px;line-height:1.72;color:var(--text);background:var(--bg)}
+
+.hero{background:linear-gradient(135deg,#1f1a2e 0%,#2d2340 40%,#3a2d50 100%);color:#faf8f4;padding:4rem 2rem 3.5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='%23ffffff' fill-opacity='0.04'/%3E%3C/svg%3E")}
+.hero-inner{max-width:820px;margin:0 auto;position:relative;z-index:1}
+.hero-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;background:rgba(106,76,147,0.3);color:#c4a8e8;padding:0.3em 0.9em;border-radius:20px;margin-bottom:1.2rem;border:1px solid rgba(106,76,147,0.3)}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:clamp(2rem,5vw,3rem);line-height:1.15;margin-bottom:0.8rem}
+.hero h1 em{font-style:italic;color:#c4a8e8}
+.hero-sub{font-size:1.15rem;color:rgba(250,248,244,0.7);font-weight:300;max-width:620px;line-height:1.6}
+
+.toc-bar{max-width:860px;margin:-1.5rem auto 0;padding:0 1.5rem;position:relative;z-index:2}
+.toc-card{background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:1.5rem 2rem;display:flex;flex-wrap:wrap;gap:0.5rem 1rem;align-items:center;border:1px solid var(--border-light)}
+.toc-label{font-family:'JetBrains Mono',monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-light);margin-right:0.5rem}
+.toc-card a{font-size:0.88rem;color:var(--purple);text-decoration:none;padding:0.25em 0.7em;border-radius:6px;transition:all 0.2s}
+.toc-card a:hover{background:var(--purple-light)}
+
+.container{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+
+.section{margin-bottom:3rem}
+.section-header{display:flex;align-items:center;gap:0.8rem;margin-bottom:1.5rem;cursor:pointer;user-select:none}
+.section-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;font-weight:500;color:var(--purple);background:rgba(106,76,147,0.08);padding:0.3em 0.65em;border-radius:6px;letter-spacing:0.05em;flex-shrink:0}
+.section-header h2{font-family:'Playfair Display',Georgia,serif;font-size:1.6rem;font-weight:700;flex:1}
+.section-toggle{font-size:1.2rem;color:var(--text-light);transition:transform 0.3s;flex-shrink:0}
+.section.collapsed .section-toggle{transform:rotate(-90deg)}
+.section.collapsed .section-body{display:none}
+
+.box{border-radius:var(--radius);padding:1.4rem 1.6rem;margin:1.3rem 0;border-left:4px solid}
+.box-label{font-family:'JetBrains Mono',monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:500;margin-bottom:0.5rem;display:block}
+.box.def{background:var(--bg-def);border-color:var(--blue)} .box.def .box-label{color:var(--blue)}
+.box.example{background:var(--bg-example);border-color:var(--green)} .box.example .box-label{color:var(--green)}
+.box.exercise{background:var(--bg-exercise);border-color:var(--orange)} .box.exercise .box-label{color:var(--orange)}
+.box.aside{background:var(--bg-aside);border-color:var(--orange-light)} .box.aside .box-label{color:var(--orange)}
+.box.warning{background:#fef2f2;border-color:#d94040} .box.warning .box-label{color:#d94040}
+.box.fun{background:var(--bg-fun);border-color:var(--teal)} .box.fun .box-label{color:var(--teal)}
+
+.reveal-btn{display:inline-flex;align-items:center;gap:0.4rem;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent);background:rgba(192,84,58,0.07);border:1px solid rgba(192,84,58,0.2);padding:0.45em 1em;border-radius:6px;cursor:pointer;transition:all 0.2s;margin-top:0.7rem}
+.reveal-btn:hover{background:rgba(192,84,58,0.13);border-color:rgba(192,84,58,0.35)}
+.reveal-content{display:none;margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--border);animation:fadeIn 0.3s ease}
+.reveal-content.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+.math-block{text-align:center;margin:1.2rem 0;font-size:1.15em;font-style:italic;line-height:2}
+
+.widget{background:var(--bg-widget);border:1px solid var(--purple-light);border-radius:var(--radius-lg);padding:1.5rem;margin:1.5rem 0}
+.widget-title{font-family:'JetBrains Mono',monospace;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--purple);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+.widget-title::before{content:'⚡'}
+
+.graph-canvas{width:100%;max-width:520px;aspect-ratio:1/1;border:1px solid var(--border);border-radius:var(--radius);background:white;display:block;margin:0 auto;cursor:crosshair}
+.graph-canvas.wide{aspect-ratio:5/3}
+
+h3.sub{font-family:'Playfair Display',serif;margin:2rem 0 1rem;font-size:1.25rem;font-weight:700}
+
+/* Value table */
+.val-table{width:100%;max-width:360px;margin:1rem auto;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:0.85rem}
+.val-table th,.val-table td{padding:0.35em 0.8em;border:1px solid var(--border);text-align:center}
+.val-table th{background:var(--bg-warm);color:var(--text-muted);font-weight:500;font-size:0.78rem}
+.val-table .approach-right{color:var(--blue)}
+.val-table .approach-left{color:var(--accent)}
+
+/* Slider controls */
+.slider-row{display:flex;align-items:center;gap:1rem;justify-content:center;flex-wrap:wrap;margin:0.8rem 0}
+.slider-row label{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:500}
+.eps-slider{-webkit-appearance:none;appearance:none;width:220px;height:6px;border-radius:3px;background:var(--purple-light);outline:none}
+.eps-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--purple);cursor:pointer;box-shadow:0 2px 6px rgba(106,76,147,0.3)}
+.eps-display{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--purple);font-weight:600;min-width:80px;text-align:center}
+
+/* Quiz */
+.quiz-option{font-family:'JetBrains Mono',monospace;font-size:0.82rem;padding:0.7em 1em;border:2px solid var(--border);border-radius:8px;background:white;cursor:pointer;transition:all 0.2s;text-align:center}
+.quiz-option:hover{border-color:var(--purple);background:var(--purple-light)}
+.quiz-option.correct{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.quiz-option.wrong{border-color:#d94040;background:#fef2f2;color:#d94040}
+
+.footer{text-align:center;padding:2rem;color:var(--text-light);font-size:0.82rem;border-top:1px solid var(--border-light);margin-top:2rem}
+
+@media(max-width:640px){
+  body{font-size:17px}.hero{padding:3rem 1.2rem 2.5rem}.hero h1{font-size:1.8rem}
+  .toc-card{flex-direction:column;align-items:flex-start}.container{padding:2rem 1rem 3rem}
+  .box{padding:1.1rem 1.2rem}.section-header h2{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Math 101 · Fall 2025</div>
+    <h1>Lecture 04: <em>Limits</em></h1>
+    <p class="hero-sub">The idea that launched calculus — what happens when you get infinitely close? Archimedes knew, Zeno worried about it, and Newton made it precise.</p>
+  </div>
+</header>
+
+<nav class="toc-bar">
+  <div class="toc-card">
+    <span class="toc-label">Jump to</span>
+    <a href="#sec-motivation">Motivation</a>
+    <a href="#sec-informal">Informal Limits</a>
+    <a href="#sec-tables-warning">Tables Can Lie</a>
+    <a href="#sec-epsilon-delta">ε-δ Game</a>
+    <a href="#sec-one-sided">One-Sided Limits</a>
+    <a href="#sec-practice">Practice</a>
+  </div>
+</nav>
+
+<main class="container">
+
+<!-- ──────── §1 MOTIVATION ──────── -->
+<section class="section" id="sec-motivation">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§1</span>
+    <h2>Why Limits? — Motivating Examples</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <p>Before we define limits formally, let's see why we need them. Several classical problems all hinge on the idea of doing something "forever" or "infinitely close."</p>
+
+    <h3 class="sub">Archimedes and the Circle</h3>
+    <p>Take a circle, cut it into pizza slices, and rearrange them alternately. As the number of slices grows, the shape looks more and more like a rectangle with height <em>r</em> and width <em>C/2 = πr</em>. Area = <em>r</em> · <em>πr</em> = <em>πr</em>². But what does "ultimately" mean here?</p>
+
+    <h3 class="sub">The Rope Problem — Adding Infinitely Many Numbers</h3>
+
+    <div class="box fun">
+      <span class="box-label">Thought Experiment</span>
+      Take a rope of length L. Cut it in half — keep one piece (L/2). Cut the remaining piece in half — keep one (L/4). Keep going forever.
+      <br><br>
+      The total length of all kept pieces is:
+      <div class="math-block">L/2 + L/4 + L/8 + ⋯ = L</div>
+      We're adding <strong>infinitely many positive numbers</strong> and getting a <strong>finite sum</strong>! And we can get as close to L as we want by taking enough terms.
+    </div>
+
+    <!-- Interactive partial sums widget -->
+    <div class="widget">
+      <div class="widget-title">Interactive — Partial Sums of 1/2 + 1/4 + 1/8 + ⋯</div>
+      <p style="font-size:0.9rem;color:var(--text-muted);text-align:center;margin-bottom:0.5rem;">Drag the slider to add more terms and watch the sum approach 1.</p>
+      <div class="slider-row">
+        <label>Terms: N =</label>
+        <input type="range" class="eps-slider" id="sumSlider" min="1" max="20" step="1" value="4">
+        <span class="eps-display" id="sumN">4</span>
+      </div>
+      <canvas class="graph-canvas wide" id="sumCanvas" width="520" height="312"></canvas>
+      <div id="sumResult" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.9rem;margin-top:0.6rem;color:var(--purple);"></div>
+    </div>
+
+    <h3 class="sub">Zeno's Paradox</h3>
+
+    <div class="box aside">
+      <span class="box-label">Zeno's Paradox (~450 BC)</span>
+      A man stands at distance <em>d</em> from a wall. Each step, he travels <strong>half the remaining distance</strong>. After step 1 he's at d/2 from the wall, after step 2 at d/4, and so on.
+      <br><br>
+      Zeno argued: he <strong>never reaches the wall</strong>, because there's always some distance left (d/2<sup>n</sup> &gt; 0 for any finite n).
+      <br><br>
+      But physics says he does reach it! The resolution: the <em>infinite sum of times</em> it takes is <strong>finite</strong>. Limits make this precise.
+    </div>
+
+    <h3 class="sub">The Tangent Line Problem</h3>
+    <p>Given a distance-time curve <em>s</em>(<em>t</em>), how do we find the <strong>instantaneous velocity</strong> at time <em>t</em>? Newton's idea: take the secant line through (<em>t</em>, <em>s</em>(<em>t</em>)) and (<em>t</em>+<em>h</em>, <em>s</em>(<em>t</em>+<em>h</em>)), with slope:</p>
+
+    <div class="math-block">
+      slope = [s(t+h) − s(t)] / h
+    </div>
+
+    <p>Then let <em>h</em> → 0. The secant line "becomes" the tangent line. But what does <em>h</em> → 0 actually <em>mean</em>? That's exactly what limits formalize.</p>
+
+  </div>
+</section>
+
+<!-- ──────── §2 INFORMAL LIMITS ──────── -->
+<section class="section" id="sec-informal">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§2</span>
+    <h2>The Informal Definition of a Limit</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="box def">
+      <span class="box-label">Definition — Limit (Informal)</span>
+      Let <em>f</em> : A → ℝ be a function and <em>c</em> a real number (<em>f</em> may or may not be defined at <em>c</em>). We say
+      <div class="math-block" style="font-size:1.3em;">
+        lim<sub>x→c</sub> f(x) = L
+      </div>
+      if <em>f</em>(<em>x</em>) gets <strong>arbitrarily close to L</strong> whenever <em>x</em> is <strong>sufficiently close to <em>c</em></strong> (but <em>x</em> ≠ <em>c</em>).
+    </div>
+
+    <div class="box warning">
+      <span class="box-label">Critical point</span>
+      The limit is about what happens <strong>near</strong> <em>c</em>, not <strong>at</strong> <em>c</em>. The function doesn't even need to be defined at <em>c</em> for the limit to exist!
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Example — Limit via a table</span>
+      Consider <em>f</em>(<em>x</em>) = (<em>x</em>² − 1)/(<em>x</em> − 1) at <em>c</em> = 1. Note that <em>f</em>(1) is undefined (0/0).
+      <br><br>Let's see what happens as <em>x</em> approaches 1 from both sides:
+
+      <table class="val-table">
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr class="approach-right"><td>1.01</td><td>2.01</td></tr>
+        <tr class="approach-right"><td>1.001</td><td>2.001</td></tr>
+        <tr class="approach-right"><td>1.0001</td><td>2.0001</td></tr>
+        <tr><td colspan="2" style="color:var(--text-light);font-size:0.8rem;">—</td></tr>
+        <tr class="approach-left"><td>0.9</td><td>1.9</td></tr>
+        <tr class="approach-left"><td>0.99</td><td>1.99</td></tr>
+        <tr class="approach-left"><td>0.999</td><td>1.999</td></tr>
+      </table>
+
+      <p>From both sides, <em>f</em>(<em>x</em>) → 2. We guess that lim<sub>x→1</sub> (<em>x</em>²−1)/(<em>x</em>−1) = 2.</p>
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show algebraic proof ▾</button>
+      <div class="reveal-content">
+        For <em>x</em> ≠ 1: &ensp; (<em>x</em>²−1)/(<em>x</em>−1) = (<em>x</em>−1)(<em>x</em>+1)/(<em>x</em>−1) = <em>x</em>+1.
+        <br>As <em>x</em> → 1, <em>x</em>+1 → 2. ✓
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §3 TABLES CAN LIE ──────── -->
+<section class="section" id="sec-tables-warning">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§3</span>
+    <h2>Tables Can Be Misleading!</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="box warning">
+      <span class="box-label">Cautionary tale</span>
+      Consider <em>f</em>(<em>x</em>) = sin(π/<em>x</em>) and the question: what is lim<sub>x→0</sub> sin(π/<em>x</em>)?
+    </div>
+
+    <p>If we naively build a table using <em>x</em> = 1, 1/2, 1/3, 1/4, …:</p>
+
+    <table class="val-table">
+      <tr><th>x</th><th>sin(π/x)</th></tr>
+      <tr><td>1</td><td>0</td></tr>
+      <tr><td>1/2</td><td>0</td></tr>
+      <tr><td>1/3</td><td>0</td></tr>
+      <tr><td>1/4</td><td>0</td></tr>
+      <tr><td>1/100</td><td>0</td></tr>
+      <tr><td>1/10000</td><td>0</td></tr>
+    </table>
+
+    <p>You might guess the limit is 0. <strong>But that's wrong!</strong></p>
+
+    <p>The table only tested inputs of the form 1/<em>n</em>, where sin(<em>n</em>π) = 0 always. There are plenty of other inputs near 0 where sin(π/<em>x</em>) is <em>not</em> zero — it oscillates wildly between −1 and 1.</p>
+
+    <!-- Interactive sin(π/x) graph -->
+    <div class="widget">
+      <div class="widget-title">Interactive — See sin(π/x) oscillate wildly near 0</div>
+      <p style="font-size:0.9rem;color:var(--text-muted);text-align:center;margin-bottom:0.5rem;">Drag the slider to zoom in near x = 0. The oscillation never settles down!</p>
+      <div class="slider-row">
+        <label>Zoom window: x ∈ (0,</label>
+        <input type="range" class="eps-slider" id="sinZoomSlider" min="1" max="50" step="1" value="10">
+        <span class="eps-display" id="sinZoomVal" style="min-width:40px;">2.0</span>
+        <label>)</label>
+      </div>
+      <canvas class="graph-canvas wide" id="sinPiCanvas" width="520" height="312"></canvas>
+    </div>
+
+    <p>The function sin(π/<em>x</em>) oscillates infinitely often near 0, so lim<sub>x→0</sub> sin(π/<em>x</em>) <strong>does not exist</strong>.</p>
+
+    <div class="box aside">
+      <span class="box-label">Lesson</span>
+      Tables can suggest a limit by showing a pattern, but they can never <em>prove</em> it. You might accidentally pick special inputs that all give the same output. A rigorous proof requires the ε-δ definition.
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §4 EPSILON-DELTA ──────── -->
+<section class="section" id="sec-epsilon-delta">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§4</span>
+    <h2>The ε-δ Definition — A Game</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <p>We're going to make limits precise using a clever two-player game.</p>
+
+    <div class="box def">
+      <span class="box-label">The ε-δ Game</span>
+      <strong>Player 1 (the challenger)</strong> picks any ε &gt; 0 and draws a horizontal band (L−ε, L+ε) around L.
+      <br><br>
+      <strong>Player 2 (the defender)</strong> must find a δ &gt; 0 such that for every <em>x</em> in (c−δ, c+δ) with <em>x</em> ≠ <em>c</em>, we have <em>f</em>(<em>x</em>) ∈ (L−ε, L+ε).
+      <br><br>
+      <strong>If the defender can always win</strong> (for every ε, no matter how small), then lim<sub>x→c</sub> <em>f</em>(<em>x</em>) = L.
+      <br><br>
+      <strong>If the challenger finds even one ε</strong> where the defender can't respond, then the limit either doesn't equal L, or doesn't exist.
+    </div>
+
+    <div class="box def">
+      <span class="box-label">Formal Definition</span>
+      We write lim<sub>x→c</sub> f(x) = L if:
+      <div class="math-block" style="font-size:1em;font-style:normal;">
+        For every <strong>ε &gt; 0</strong>, there exists a <strong>δ &gt; 0</strong> such that:<br>
+        if 0 &lt; |x − c| &lt; δ, then |f(x) − L| &lt; ε
+      </div>
+    </div>
+
+    <p>Let's unpack this with pictures. The condition |<em>x</em> − <em>c</em>| &lt; δ means <em>x</em> ∈ (<em>c</em>−δ, <em>c</em>+δ). The condition |<em>f</em>(<em>x</em>) − L| &lt; ε means <em>f</em>(<em>x</em>) ∈ (L−ε, L+ε).</p>
+
+    <!-- Interactive ε-δ widget -->
+    <div class="widget">
+      <div class="widget-title">Interactive — Play the ε-δ Game with f(x) = 2x, c = 1, L = 2</div>
+      <p style="font-size:0.9rem;color:var(--text-muted);text-align:center;margin-bottom:0.5rem;">You're the challenger — pick ε. The defender responds with δ = ε/2.</p>
+      <div class="slider-row">
+        <label>ε =</label>
+        <input type="range" class="eps-slider" id="epsSlider" min="1" max="100" step="1" value="50">
+        <span class="eps-display" id="epsVal">1.00</span>
+      </div>
+      <div id="deltaDisplay" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.9rem;margin-bottom:0.5rem;color:var(--green);"></div>
+      <canvas class="graph-canvas" id="edCanvas" width="520" height="520"></canvas>
+      <div id="edVerdict" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-top:0.6rem;"></div>
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Worked example — Why δ = ε/2 works for f(x) = 2x</span>
+      <strong>Claim:</strong> lim<sub>x→1</sub> 2<em>x</em> = 2. We show that δ = ε/2 works for any ε &gt; 0.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show proof ▾</button>
+      <div class="reveal-content">
+        Given ε &gt; 0, let δ = ε/2. Suppose 0 &lt; |<em>x</em> − 1| &lt; δ.
+        <br><br>Then:
+        <br>|<em>f</em>(<em>x</em>) − 2| = |2<em>x</em> − 2| = 2|<em>x</em> − 1| &lt; 2δ = 2 · (ε/2) = ε. &ensp; ✓
+        <br><br>
+        So for <strong>any</strong> ε the challenger picks, the defender can always respond with δ = ε/2, and the outputs stay within the ε-band. The limit is 2.
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise — Find δ</span>
+      For <em>f</em>(<em>x</em>) = 3<em>x</em> + 1, <em>c</em> = 2, L = 7. Find δ in terms of ε.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        |<em>f</em>(<em>x</em>) − 7| = |3<em>x</em>+1 − 7| = |3<em>x</em> − 6| = 3|<em>x</em> − 2| &lt; 3δ.
+        <br>We need 3δ &lt; ε, so <strong>δ = ε/3</strong> works.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §5 ONE-SIDED LIMITS ──────── -->
+<section class="section" id="sec-one-sided">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§5</span>
+    <h2>One-Sided Limits</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <p>On the real line, you can approach a point <em>c</em> from two directions: from the <strong>left</strong> (<em>x</em> &lt; <em>c</em>) or from the <strong>right</strong> (<em>x</em> &gt; <em>c</em>).</p>
+
+    <div class="box def">
+      <span class="box-label">Definitions — One-Sided Limits</span>
+      <strong>Left-hand limit:</strong> &ensp; lim<sub>x→c⁻</sub> f(x) &ensp;— approach <em>c</em> from <em>below</em> (x &lt; c).
+      <br><br>
+      <strong>Right-hand limit:</strong> &ensp; lim<sub>x→c⁺</sub> f(x) &ensp;— approach <em>c</em> from <em>above</em> (x &gt; c).
+    </div>
+
+    <div class="box def">
+      <span class="box-label">The Two-Sided Limit Exists If and Only If</span>
+      <div class="math-block" style="font-size:1.05em;">
+        lim<sub>x→c</sub> f(x) exists &ensp;⟺&ensp; lim<sub>x→c⁻</sub> f(x) = lim<sub>x→c⁺</sub> f(x)
+      </div>
+      Both one-sided limits must exist <strong>and be equal</strong>.
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Example — A jump discontinuity</span>
+      Consider the piecewise function shown in the lecture: approaching <em>x</em> = 2, the function comes from the left toward 1 (with an open circle at (2,1)), but from the right it jumps to 3 (with a filled dot at (2,3)).
+      <br><br>
+      lim<sub>x→2⁻</sub> <em>f</em>(<em>x</em>) = 1 &ensp; and &ensp; lim<sub>x→2⁺</sub> <em>f</em>(<em>x</em>) = 3.
+      <br><br>
+      Since 1 ≠ 3, the two-sided limit lim<sub>x→2</sub> <em>f</em>(<em>x</em>) <strong>does not exist</strong>.
+    </div>
+
+    <h3 class="sub">Example — |x|/x</h3>
+
+    <div class="box example">
+      <span class="box-label">Example — lim<sub>x→0</sub> |x|/x</span>
+      Since |<em>x</em>| = <em>x</em> for <em>x</em> &gt; 0 and |<em>x</em>| = −<em>x</em> for <em>x</em> &lt; 0:
+      <div class="math-block" style="font-size:1em;font-style:normal;">
+        |x|/x = 1 &ensp;for x &gt; 0, &emsp; |x|/x = −1 &ensp;for x &lt; 0
+      </div>
+      So: lim<sub>x→0⁺</sub> |<em>x</em>|/<em>x</em> = <strong>1</strong>, &ensp; lim<sub>x→0⁻</sub> |<em>x</em>|/<em>x</em> = <strong>−1</strong>.
+      <br><br>
+      Since 1 ≠ −1, the limit lim<sub>x→0</sub> |<em>x</em>|/<em>x</em> <strong>DNE</strong>.
+    </div>
+
+    <!-- Interactive one-sided limits widget -->
+    <div class="widget">
+      <div class="widget-title">Interactive — Explore One-Sided Limits of |x|/x</div>
+      <p style="font-size:0.9rem;color:var(--text-muted);text-align:center;margin-bottom:0.5rem;">Drag on the graph to approach x = 0 from either side.</p>
+      <canvas class="graph-canvas wide" id="onesidedCanvas" width="520" height="312"></canvas>
+      <div id="onesidedInfo" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-top:0.6rem;min-height:1.5em;"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §6 PRACTICE ──────── -->
+<section class="section" id="sec-practice">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§6</span>
+    <h2>Practice Problems</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <!-- Limit quiz -->
+    <div class="widget">
+      <div class="widget-title">Quiz — Evaluate the Limit</div>
+      <div id="limQuiz">
+        <div id="lqQuestion" style="text-align:center;font-size:1.1rem;font-weight:600;margin-bottom:1rem;"></div>
+        <div id="lqOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;max-width:420px;margin:0 auto;"></div>
+        <div id="lqFeedback" style="text-align:center;font-size:0.95rem;min-height:2.5em;margin-top:0.8rem;color:var(--text-muted);"></div>
+        <div style="text-align:center;"><button id="lqNext" class="reveal-btn" style="display:none;" onclick="nextLimQ()">Next question →</button></div>
+        <div id="lqScore" style="text-align:center;font-size:1.1rem;font-weight:600;color:var(--purple);"></div>
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 1</span>
+      Using a table or algebra, guess lim<sub>x→3</sub> (<em>x</em>² − 9)/(<em>x</em> − 3).
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        Factor: (<em>x</em>²−9)/(<em>x</em>−3) = (<em>x</em>−3)(<em>x</em>+3)/(<em>x</em>−3) = <em>x</em>+3 for <em>x</em> ≠ 3.
+        <br>As <em>x</em> → 3: <em>x</em>+3 → <strong>6</strong>.
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 2</span>
+      For <em>f</em>(<em>x</em>) = 5<em>x</em> − 3, prove lim<sub>x→2</sub> <em>f</em>(<em>x</em>) = 7 using ε-δ.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        |<em>f</em>(<em>x</em>) − 7| = |5<em>x</em>−3−7| = |5<em>x</em>−10| = 5|<em>x</em>−2| &lt; 5δ.
+        <br>Need 5δ &lt; ε → choose <strong>δ = ε/5</strong>.
+        <br>Check: if 0 &lt; |<em>x</em>−2| &lt; ε/5, then |<em>f</em>(<em>x</em>)−7| = 5|<em>x</em>−2| &lt; 5·(ε/5) = ε. ✓
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 3</span>
+      Find the left and right limits of <em>f</em>(<em>x</em>) = ⌊<em>x</em>⌋ (floor function) at <em>x</em> = 3. Does lim<sub>x→3</sub> ⌊<em>x</em>⌋ exist?
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        <strong>From the right:</strong> For <em>x</em> slightly above 3 (like 3.01), ⌊<em>x</em>⌋ = 3. So lim<sub>x→3⁺</sub> ⌊<em>x</em>⌋ = 3.
+        <br><strong>From the left:</strong> For <em>x</em> slightly below 3 (like 2.99), ⌊<em>x</em>⌋ = 2. So lim<sub>x→3⁻</sub> ⌊<em>x</em>⌋ = 2.
+        <br><br>Since 3 ≠ 2, the two-sided limit <strong>does not exist</strong>.
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 4</span>
+      Explain intuitively why lim<sub>x→0</sub> sin(π/<em>x</em>) does not exist, even though sin(π/<em>x</em>) is bounded between −1 and 1.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        As <em>x</em> → 0, the argument π/<em>x</em> → ±∞, so sin(π/<em>x</em>) cycles through all values in [−1, 1] infinitely often. No matter how small a neighborhood of 0 you take, the function takes values near both 1 and −1, so it can't settle near any single value L.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">Math 101 · Fall 2025 · Lecture 04 Booklet</footer>
+
+<script>
+function toggleSection(h){h.closest('.section').classList.toggle('collapsed')}
+function toggleReveal(btn){const c=btn.nextElementSibling;c.classList.toggle('show');btn.textContent=c.classList.contains('show')?'Hide ▴':'Show solution ▾'}
+
+// ══════════════════════════════════════
+// Partial sums widget
+// ══════════════════════════════════════
+const sumSlider=document.getElementById('sumSlider');
+const sumCanvas=document.getElementById('sumCanvas');
+const sumCtx=sumCanvas.getContext('2d');
+
+function drawPartialSums(){
+  const N=parseInt(sumSlider.value);
+  document.getElementById('sumN').textContent=N;
+  const W=sumCanvas.width,H=sumCanvas.height;
+  sumCtx.clearRect(0,0,W,H);
+  sumCtx.fillStyle='#fff';sumCtx.fillRect(0,0,W,H);
+
+  const padL=60,padR=20,padT=30,padB=45;
+  const gW=W-padL-padR,gH=H-padT-padB;
+
+  // Axes
+  sumCtx.strokeStyle='#2a2520';sumCtx.lineWidth=1.5;
+  sumCtx.beginPath();sumCtx.moveTo(padL,padT);sumCtx.lineTo(padL,H-padB);sumCtx.lineTo(W-padR,H-padB);sumCtx.stroke();
+
+  // y=1 reference
+  sumCtx.setLineDash([5,5]);sumCtx.strokeStyle='#c0543a';sumCtx.lineWidth=1;
+  const y1=padT+gH*(1-1);
+  sumCtx.beginPath();sumCtx.moveTo(padL,y1);sumCtx.lineTo(W-padR,y1);sumCtx.stroke();
+  sumCtx.setLineDash([]);
+  sumCtx.fillStyle='#c0543a';sumCtx.font='12px JetBrains Mono,monospace';sumCtx.textAlign='right';
+  sumCtx.fillText('1',padL-8,y1+4);
+
+  // Bars
+  let partialSum=0;
+  const barW=Math.min(gW/N-4,40);
+  for(let k=1;k<=N;k++){
+    const term=1/Math.pow(2,k);
+    partialSum+=term;
+    const x=padL+((k-0.5)/N)*gW-barW/2;
+    const barH=partialSum*gH;
+    const y=H-padB-barH;
+    // Bar
+    sumCtx.fillStyle='rgba(106,76,147,0.7)';
+    sumCtx.fillRect(x,y,barW,barH);
+    sumCtx.strokeStyle='rgba(106,76,147,0.9)';sumCtx.lineWidth=1;
+    sumCtx.strokeRect(x,y,barW,barH);
+    // label
+    if(N<=12){
+      sumCtx.fillStyle='#2a2520';sumCtx.font='10px JetBrains Mono,monospace';sumCtx.textAlign='center';
+      sumCtx.fillText(k,x+barW/2,H-padB+14);
+    }
+  }
+
+  // y axis labels
+  sumCtx.fillStyle='#918a85';sumCtx.font='11px JetBrains Mono,monospace';sumCtx.textAlign='right';
+  for(let v=0;v<=1;v+=0.25){
+    const yp=H-padB-v*gH;
+    sumCtx.fillText(v.toFixed(2),padL-8,yp+4);
+    sumCtx.strokeStyle='#f0ede8';sumCtx.lineWidth=1;
+    sumCtx.beginPath();sumCtx.moveTo(padL,yp);sumCtx.lineTo(W-padR,yp);sumCtx.stroke();
+  }
+
+  sumCtx.fillStyle='#918a85';sumCtx.textAlign='center';
+  sumCtx.fillText('term k',padL+gW/2,H-5);
+
+  document.getElementById('sumResult').innerHTML=
+    `Sum of ${N} terms = <strong>${partialSum.toFixed(8)}</strong> &ensp;(distance from 1: ${(1-partialSum).toExponential(2)})`;
+}
+sumSlider.addEventListener('input',drawPartialSums);
+drawPartialSums();
+
+// ══════════════════════════════════════
+// sin(π/x) zoom widget
+// ══════════════════════════════════════
+const sinZoomSlider=document.getElementById('sinZoomSlider');
+const sinCanvas=document.getElementById('sinPiCanvas');
+const sinCtx=sinCanvas.getContext('2d');
+
+function drawSinPi(){
+  const zoom=parseInt(sinZoomSlider.value);
+  const xMax=2/zoom*10; // ranges from 2 (zoom=10) to 0.4 (zoom=50)
+  document.getElementById('sinZoomVal').textContent=xMax.toFixed(2);
+  const W=sinCanvas.width,H=sinCanvas.height;
+  sinCtx.clearRect(0,0,W,H);sinCtx.fillStyle='#fff';sinCtx.fillRect(0,0,W,H);
+
+  const padL=50,padR=20,padT=20,padB=35;
+  const gW=W-padL-padR,gH=H-padT-padB;
+  const yScale=gH/2.4;
+  const cy=padT+gH/2;
+
+  // Axes
+  sinCtx.strokeStyle='#2a2520';sinCtx.lineWidth=1.5;
+  sinCtx.beginPath();sinCtx.moveTo(padL,padT);sinCtx.lineTo(padL,H-padB);sinCtx.stroke();
+  sinCtx.beginPath();sinCtx.moveTo(padL,cy);sinCtx.lineTo(W-padR,cy);sinCtx.stroke();
+
+  // y=1, y=-1 refs
+  sinCtx.setLineDash([4,4]);sinCtx.strokeStyle='#ddd';sinCtx.lineWidth=1;
+  sinCtx.beginPath();sinCtx.moveTo(padL,cy-yScale);sinCtx.lineTo(W-padR,cy-yScale);sinCtx.stroke();
+  sinCtx.beginPath();sinCtx.moveTo(padL,cy+yScale);sinCtx.lineTo(W-padR,cy+yScale);sinCtx.stroke();
+  sinCtx.setLineDash([]);
+  sinCtx.fillStyle='#918a85';sinCtx.font='10px JetBrains Mono,monospace';sinCtx.textAlign='right';
+  sinCtx.fillText('1',padL-6,cy-yScale+4);
+  sinCtx.fillText('-1',padL-6,cy+yScale+4);
+  sinCtx.fillText('0',padL-6,cy+4);
+
+  // Curve
+  sinCtx.strokeStyle='#6a4c93';sinCtx.lineWidth=1.5;sinCtx.beginPath();
+  let started=false;
+  for(let px=0;px<gW;px+=0.3){
+    const x=(px/gW)*xMax+0.0001;
+    const y=Math.sin(Math.PI/x);
+    const py=cy-y*yScale;
+    if(!started){sinCtx.moveTo(padL+px,py);started=true}
+    else sinCtx.lineTo(padL+px,py);
+  }
+  sinCtx.stroke();
+
+  // x label
+  sinCtx.fillStyle='#918a85';sinCtx.textAlign='center';sinCtx.font='11px JetBrains Mono,monospace';
+  sinCtx.fillText('0',padL-2,H-padB+14);
+  sinCtx.fillText(xMax.toFixed(2),W-padR,H-padB+14);
+  sinCtx.fillStyle='#6a4c93';sinCtx.fillText('sin(π/x)',padL+gW/2,padT-5);
+}
+sinZoomSlider.addEventListener('input',drawSinPi);
+drawSinPi();
+
+// ══════════════════════════════════════
+// ε-δ widget for f(x)=2x, c=1, L=2
+// ══════════════════════════════════════
+const epsSlider=document.getElementById('epsSlider');
+const edCanvas=document.getElementById('edCanvas');
+const edCtx=edCanvas.getContext('2d');
+
+function drawED(){
+  const epsRaw=parseInt(epsSlider.value);
+  const eps=epsRaw/50; // 0.02 to 2.0
+  const delta=eps/2;
+  document.getElementById('epsVal').textContent=eps.toFixed(2);
+  document.getElementById('deltaDisplay').innerHTML=`Defender responds: δ = ε/2 = <strong>${delta.toFixed(3)}</strong>`;
+
+  const W=edCanvas.width,H=edCanvas.height;
+  edCtx.clearRect(0,0,W,H);edCtx.fillStyle='#fff';edCtx.fillRect(0,0,W,H);
+
+  const cx=W*0.35,cy=H*0.65,scale=100;
+
+  // Grid
+  edCtx.strokeStyle='#f0ede8';edCtx.lineWidth=1;
+  for(let i=-2;i<=5;i++){
+    edCtx.beginPath();edCtx.moveTo(cx+i*scale,0);edCtx.lineTo(cx+i*scale,H);edCtx.stroke();
+    edCtx.beginPath();edCtx.moveTo(0,cy-i*scale);edCtx.lineTo(W,cy-i*scale);edCtx.stroke();
+  }
+
+  // Axes
+  edCtx.strokeStyle='#2a2520';edCtx.lineWidth=1.5;
+  edCtx.beginPath();edCtx.moveTo(0,cy);edCtx.lineTo(W,cy);edCtx.stroke();
+  edCtx.beginPath();edCtx.moveTo(cx,0);edCtx.lineTo(cx,H);edCtx.stroke();
+  edCtx.fillStyle='#918a85';edCtx.font='11px JetBrains Mono,monospace';edCtx.textAlign='center';
+  for(let i=0;i<=4;i++){if(i===0)continue;edCtx.fillText(i,cx+i*scale,cy+16)}
+  edCtx.textAlign='right';
+  for(let i=1;i<=4;i++){edCtx.fillText(i,cx-8,cy-i*scale+4)}
+
+  // ε band (horizontal)
+  const L=2;
+  const yL=cy-L*scale;
+  const yTop=cy-(L+eps)*scale;
+  const yBot=cy-(L-eps)*scale;
+  edCtx.fillStyle='rgba(192,84,58,0.08)';
+  edCtx.fillRect(0,yTop,W,yBot-yTop);
+  edCtx.setLineDash([5,4]);edCtx.strokeStyle='rgba(192,84,58,0.5)';edCtx.lineWidth=1;
+  edCtx.beginPath();edCtx.moveTo(0,yTop);edCtx.lineTo(W,yTop);edCtx.stroke();
+  edCtx.beginPath();edCtx.moveTo(0,yBot);edCtx.lineTo(W,yBot);edCtx.stroke();
+  edCtx.setLineDash([]);
+
+  // δ band (vertical)
+  const c=1;
+  const xC=cx+c*scale;
+  const xL=cx+(c-delta)*scale;
+  const xR=cx+(c+delta)*scale;
+  edCtx.fillStyle='rgba(58,110,165,0.08)';
+  edCtx.fillRect(xL,0,xR-xL,H);
+  edCtx.setLineDash([5,4]);edCtx.strokeStyle='rgba(58,110,165,0.5)';edCtx.lineWidth=1;
+  edCtx.beginPath();edCtx.moveTo(xL,0);edCtx.lineTo(xL,H);edCtx.stroke();
+  edCtx.beginPath();edCtx.moveTo(xR,0);edCtx.lineTo(xR,H);edCtx.stroke();
+  edCtx.setLineDash([]);
+
+  // f(x)=2x line
+  edCtx.strokeStyle='#6a4c93';edCtx.lineWidth=2.5;
+  edCtx.beginPath();
+  edCtx.moveTo(cx+(-1)*scale,cy-(-2)*scale);
+  edCtx.lineTo(cx+3*scale,cy-6*scale);
+  edCtx.stroke();
+
+  // Point (1,2)
+  edCtx.fillStyle='#6a4c93';
+  edCtx.beginPath();edCtx.arc(xC,yL,5,0,Math.PI*2);edCtx.fill();
+
+  // Labels
+  edCtx.font='12px JetBrains Mono,monospace';
+  edCtx.fillStyle='#c0543a';edCtx.textAlign='left';
+  edCtx.fillText(`L+ε = ${(L+eps).toFixed(2)}`,W-110,yTop-4);
+  edCtx.fillText(`L−ε = ${(L-eps).toFixed(2)}`,W-110,yBot+14);
+  edCtx.fillStyle='#3a6ea5';edCtx.textAlign='center';
+  edCtx.fillText(`c−δ`,xL,H-10);
+  edCtx.fillText(`c+δ`,xR,H-10);
+
+  document.getElementById('edVerdict').innerHTML=
+    `<span style="color:var(--green)">✓ For ε = ${eps.toFixed(2)}, δ = ${delta.toFixed(3)} works — the graph stays inside the box!</span>`;
+}
+epsSlider.addEventListener('input',drawED);
+drawED();
+
+// ══════════════════════════════════════
+// |x|/x one-sided limits widget
+// ══════════════════════════════════════
+const osCanvas=document.getElementById('onesidedCanvas');
+const osCtx=osCanvas.getContext('2d');
+let osX=null;
+
+function drawOneSided(){
+  const W=osCanvas.width,H=osCanvas.height;
+  osCtx.clearRect(0,0,W,H);osCtx.fillStyle='#fff';osCtx.fillRect(0,0,W,H);
+
+  const padL=50,padR=20,padT=30,padB=35;
+  const gW=W-padL-padR,gH=H-padT-padB;
+  const cx=padL+gW/2,cy=padT+gH/2;
+  const xScale=gW/6,yScale=gH/3;
+
+  // Grid
+  osCtx.strokeStyle='#f0ede8';osCtx.lineWidth=1;
+  for(let i=-3;i<=3;i++){
+    const x=cx+i*xScale;
+    osCtx.beginPath();osCtx.moveTo(x,padT);osCtx.lineTo(x,H-padB);osCtx.stroke();
+  }
+  for(let i=-1;i<=1;i++){
+    const y=cy-i*yScale;
+    osCtx.beginPath();osCtx.moveTo(padL,y);osCtx.lineTo(W-padR,y);osCtx.stroke();
+  }
+
+  // Axes
+  osCtx.strokeStyle='#2a2520';osCtx.lineWidth=1.5;
+  osCtx.beginPath();osCtx.moveTo(padL,cy);osCtx.lineTo(W-padR,cy);osCtx.stroke();
+  osCtx.beginPath();osCtx.moveTo(cx,padT);osCtx.lineTo(cx,H-padB);osCtx.stroke();
+
+  // Labels
+  osCtx.fillStyle='#918a85';osCtx.font='11px JetBrains Mono,monospace';osCtx.textAlign='right';
+  osCtx.fillText('1',padL-6,cy-yScale+4);
+  osCtx.fillText('-1',padL-6,cy+yScale+4);
+
+  // f(x) = |x|/x: 1 for x>0, -1 for x<0
+  osCtx.strokeStyle='#6a4c93';osCtx.lineWidth=2.5;
+  // Right part (y=1)
+  osCtx.beginPath();osCtx.moveTo(cx+2,cy-yScale);osCtx.lineTo(W-padR,cy-yScale);osCtx.stroke();
+  // Left part (y=-1)
+  osCtx.beginPath();osCtx.moveTo(padL,cy+yScale);osCtx.lineTo(cx-2,cy+yScale);osCtx.stroke();
+  // Open circles at x=0
+  osCtx.fillStyle='#fff';osCtx.strokeStyle='#6a4c93';osCtx.lineWidth=2;
+  osCtx.beginPath();osCtx.arc(cx,cy-yScale,5,0,Math.PI*2);osCtx.fill();osCtx.stroke();
+  osCtx.beginPath();osCtx.arc(cx,cy+yScale,5,0,Math.PI*2);osCtx.fill();osCtx.stroke();
+
+  // Title
+  osCtx.fillStyle='#6a4c93';osCtx.font='13px JetBrains Mono,monospace';osCtx.textAlign='center';
+  osCtx.fillText('f(x) = |x|/x',cx,padT-8);
+
+  // Hover tracking
+  if(osX!==null){
+    const xVal=(osX-cx)/xScale;
+    if(Math.abs(xVal)<0.05){
+      document.getElementById('onesidedInfo').innerHTML=
+        `<span style="color:#d94040">At x = 0: undefined! (0/0)</span>`;
+    } else {
+      const yVal=xVal>0?1:-1;
+      const py=cy-yVal*yScale;
+      // Crosshairs
+      osCtx.setLineDash([3,3]);osCtx.strokeStyle='rgba(192,84,58,0.5)';osCtx.lineWidth=1;
+      osCtx.beginPath();osCtx.moveTo(osX,cy);osCtx.lineTo(osX,py);osCtx.stroke();
+      osCtx.beginPath();osCtx.moveTo(cx,py);osCtx.lineTo(osX,py);osCtx.stroke();
+      osCtx.setLineDash([]);
+      osCtx.fillStyle='#c0543a';osCtx.beginPath();osCtx.arc(osX,py,5,0,Math.PI*2);osCtx.fill();
+
+      const side=xVal>0?'right (x→0⁺)':'left (x→0⁻)';
+      const color=xVal>0?'var(--green)':'var(--accent)';
+      document.getElementById('onesidedInfo').innerHTML=
+        `Approaching from <span style="color:${color}">${side}</span>: x = ${xVal.toFixed(3)}, f(x) = <strong>${yVal}</strong>`;
+    }
+  }
+}
+
+osCanvas.addEventListener('mousemove',e=>{
+  const rect=osCanvas.getBoundingClientRect();
+  osX=(e.clientX-rect.left)*(osCanvas.width/rect.width);
+  drawOneSided();
+});
+osCanvas.addEventListener('mouseleave',()=>{osX=null;drawOneSided();document.getElementById('onesidedInfo').textContent=''});
+drawOneSided();
+
+// ══════════════════════════════════════
+// Limit quiz
+// ══════════════════════════════════════
+const limQs=[
+  {q:'lim<sub>x→2</sub> (x² − 4)/(x − 2)',opts:['2','4','DNE','0'],ans:1,explain:'Factor: (x−2)(x+2)/(x−2) = x+2 → 4.'},
+  {q:'lim<sub>x→0</sub> sin(π/x)',opts:['0','1','−1','DNE'],ans:3,explain:'sin(π/x) oscillates wildly between −1 and 1 near 0 — it never settles.'},
+  {q:'lim<sub>x→0⁺</sub> |x|/x',opts:['1','−1','0','DNE'],ans:0,explain:'For x > 0, |x|/x = x/x = 1.'},
+  {q:'lim<sub>x→1</sub> (x³ − 1)/(x − 1)',opts:['1','2','3','DNE'],ans:2,explain:'Factor: (x−1)(x²+x+1)/(x−1) = x²+x+1 → 1+1+1 = 3.'},
+  {q:'lim<sub>x→0</sub> |x|/x',opts:['0','1','−1','DNE'],ans:3,explain:'Left limit = −1, right limit = 1. Since they differ, the two-sided limit DNE.'},
+  {q:'lim<sub>x→∞</sub> 1/x',opts:['0','1','∞','DNE'],ans:0,explain:'As x grows without bound, 1/x gets arbitrarily close to 0.'},
+];
+
+let lqIdx=0,lqCorrect=0,lqAnswered=false;
+function renderLimQ(){
+  if(lqIdx>=limQs.length){document.getElementById('lqQuestion').textContent='';document.getElementById('lqOptions').innerHTML='';document.getElementById('lqFeedback').textContent='';document.getElementById('lqNext').style.display='none';document.getElementById('lqScore').textContent=`You got ${lqCorrect} / ${limQs.length} correct!`;return;}
+  const q=limQs[lqIdx];lqAnswered=false;
+  document.getElementById('lqQuestion').innerHTML=`<span style="color:var(--text-muted);font-size:0.8rem;">Question ${lqIdx+1} of ${limQs.length}</span><br>Evaluate: ${q.q}`;
+  const od=document.getElementById('lqOptions');od.innerHTML='';
+  q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='quiz-option';b.textContent=o;b.onclick=()=>checkLimA(i);od.appendChild(b);});
+  document.getElementById('lqFeedback').textContent='';document.getElementById('lqNext').style.display='none';document.getElementById('lqScore').textContent='';
+}
+function checkLimA(idx){
+  if(lqAnswered)return;lqAnswered=true;const q=limQs[lqIdx];
+  const bs=document.querySelectorAll('#lqOptions .quiz-option');bs[q.ans].classList.add('correct');
+  if(idx===q.ans){lqCorrect++;document.getElementById('lqFeedback').innerHTML=`<span style="color:var(--green)">✓ Correct!</span> ${q.explain}`}
+  else{bs[idx].classList.add('wrong');document.getElementById('lqFeedback').innerHTML=`<span style="color:#d94040">✗ Not quite.</span> ${q.explain}`}
+  document.getElementById('lqNext').style.display='inline-flex';
+}
+function nextLimQ(){lqIdx++;renderLimQ();}
+renderLimQ();
+</script>
+
+</body>
+</html>

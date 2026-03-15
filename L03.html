@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 101 — Lecture 03: Types of Functions, Invertibility &amp; Infinity</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f4;
+  --bg-warm: #f5f0e8;
+  --bg-card: #ffffff;
+  --bg-aside: #fdf6ec;
+  --bg-def: #eef4fb;
+  --bg-example: #f0faf4;
+  --bg-exercise: #fef7f0;
+  --bg-widget: #f8f5ff;
+  --bg-fun: #fef8f0;
+  --text: #2a2520;
+  --text-muted: #6b6360;
+  --text-light: #918a85;
+  --accent: #c0543a;
+  --accent-light: #e8a892;
+  --blue: #3a6ea5;
+  --blue-light: #d0e2f4;
+  --green: #3a7a54;
+  --green-light: #d4eddc;
+  --orange: #c47a20;
+  --orange-light: #fae5c8;
+  --purple: #6a4c93;
+  --purple-light: #e8ddf5;
+  --teal: #2a8a8a;
+  --teal-light: #d0f0f0;
+  --border: #e0dbd5;
+  --border-light: #ece8e2;
+  --shadow-sm: 0 1px 3px rgba(42,37,32,0.06);
+  --shadow-md: 0 4px 12px rgba(42,37,32,0.08);
+  --shadow-lg: 0 8px 30px rgba(42,37,32,0.1);
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Crimson Pro',Georgia,serif;
+  font-size:19px; line-height:1.72; color:var(--text); background:var(--bg);
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #1a2636 0%, #243447 40%, #2a3f55 100%);
+  color:#faf8f4; padding:4rem 2rem 3.5rem; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='%23ffffff' stroke-opacity='0.03' stroke-width='1'/%3E%3C/svg%3E");
+}
+.hero-inner { max-width:820px; margin:0 auto; position:relative; z-index:1; }
+.hero-tag {
+  display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.7rem;
+  letter-spacing:0.15em; text-transform:uppercase;
+  background:rgba(58,110,165,0.25); color:#8bb8e8;
+  padding:0.3em 0.9em; border-radius:20px; margin-bottom:1.2rem;
+  border:1px solid rgba(58,110,165,0.3);
+}
+.hero h1 {
+  font-family:'Playfair Display',Georgia,serif; font-weight:800;
+  font-size:clamp(2rem,5vw,3rem); line-height:1.15; margin-bottom:0.8rem;
+}
+.hero h1 em { font-style:italic; color:#8bb8e8; }
+.hero-sub {
+  font-size:1.15rem; color:rgba(250,248,244,0.7); font-weight:300;
+  max-width:620px; line-height:1.6;
+}
+
+/* ── TOC ── */
+.toc-bar { max-width:860px; margin:-1.5rem auto 0; padding:0 1.5rem; position:relative; z-index:2; }
+.toc-card {
+  background:var(--bg-card); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg); padding:1.5rem 2rem;
+  display:flex; flex-wrap:wrap; gap:0.5rem 1rem; align-items:center;
+  border:1px solid var(--border-light);
+}
+.toc-label {
+  font-family:'JetBrains Mono',monospace; font-size:0.65rem;
+  text-transform:uppercase; letter-spacing:0.12em; color:var(--text-light); margin-right:0.5rem;
+}
+.toc-card a {
+  font-size:0.88rem; color:var(--blue); text-decoration:none;
+  padding:0.25em 0.7em; border-radius:6px; transition:all 0.2s;
+}
+.toc-card a:hover { background:var(--blue-light); }
+
+/* ── MAIN ── */
+.container { max-width:860px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+
+/* ── SECTIONS ── */
+.section { margin-bottom:3rem; }
+.section-header {
+  display:flex; align-items:center; gap:0.8rem; margin-bottom:1.5rem;
+  cursor:pointer; user-select:none;
+}
+.section-num {
+  font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:500;
+  color:var(--blue); background:rgba(58,110,165,0.08);
+  padding:0.3em 0.65em; border-radius:6px; letter-spacing:0.05em; flex-shrink:0;
+}
+.section-header h2 {
+  font-family:'Playfair Display',Georgia,serif; font-size:1.6rem; font-weight:700; flex:1;
+}
+.section-toggle { font-size:1.2rem; color:var(--text-light); transition:transform 0.3s; flex-shrink:0; }
+.section.collapsed .section-toggle { transform:rotate(-90deg); }
+.section.collapsed .section-body { display:none; }
+
+/* ── BOXES ── */
+.box { border-radius:var(--radius); padding:1.4rem 1.6rem; margin:1.3rem 0; border-left:4px solid; }
+.box-label {
+  font-family:'JetBrains Mono',monospace; font-size:0.65rem;
+  text-transform:uppercase; letter-spacing:0.12em; font-weight:500; margin-bottom:0.5rem; display:block;
+}
+.box.def { background:var(--bg-def); border-color:var(--blue); }
+.box.def .box-label { color:var(--blue); }
+.box.example { background:var(--bg-example); border-color:var(--green); }
+.box.example .box-label { color:var(--green); }
+.box.exercise { background:var(--bg-exercise); border-color:var(--orange); }
+.box.exercise .box-label { color:var(--orange); }
+.box.aside { background:var(--bg-aside); border-color:var(--orange-light); }
+.box.aside .box-label { color:var(--orange); }
+.box.warning { background:#fef2f2; border-color:#d94040; }
+.box.warning .box-label { color:#d94040; }
+.box.fun { background:var(--bg-fun); border-color:var(--teal); }
+.box.fun .box-label { color:var(--teal); }
+.box.logic { background:#f5f0fa; border-color:var(--purple); }
+.box.logic .box-label { color:var(--purple); }
+
+/* ── REVEAL ── */
+.reveal-btn {
+  display:inline-flex; align-items:center; gap:0.4rem;
+  font-family:'JetBrains Mono',monospace; font-size:0.75rem;
+  color:var(--accent); background:rgba(192,84,58,0.07);
+  border:1px solid rgba(192,84,58,0.2); padding:0.45em 1em;
+  border-radius:6px; cursor:pointer; transition:all 0.2s; margin-top:0.7rem;
+}
+.reveal-btn:hover { background:rgba(192,84,58,0.13); border-color:rgba(192,84,58,0.35); }
+.reveal-content { display:none; margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--border); animation:fadeIn 0.3s ease; }
+.reveal-content.show { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── MATH ── */
+.math-block { text-align:center; margin:1.2rem 0; font-size:1.15em; font-style:italic; line-height:2; }
+
+/* ── WIDGET ── */
+.widget {
+  background:var(--bg-widget); border:1px solid var(--purple-light);
+  border-radius:var(--radius-lg); padding:1.5rem; margin:1.5rem 0;
+}
+.widget-title {
+  font-family:'JetBrains Mono',monospace; font-size:0.7rem;
+  text-transform:uppercase; letter-spacing:0.1em; color:var(--purple);
+  margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;
+}
+.widget-title::before { content:'⚡'; }
+
+/* ── INTERACTIVE GRAPH CANVAS ── */
+.graph-canvas {
+  width:100%; max-width:520px; aspect-ratio:1/1;
+  border:1px solid var(--border); border-radius:var(--radius);
+  background:white; display:block; margin:0 auto; cursor:crosshair;
+}
+
+/* ── MAPPING DIAGRAMS ── */
+.mapping-row {
+  display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin:1rem 0;
+}
+.mapping-card {
+  background:white; border:2px solid var(--border); border-radius:var(--radius);
+  padding:1rem; text-align:center; cursor:pointer; transition:all 0.25s; width:210px;
+}
+.mapping-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.mapping-card.is-yes { border-color:var(--green); }
+.mapping-card.is-no { border-color:#d94040; }
+.mc-label {
+  font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:600;
+  letter-spacing:0.05em; margin-top:0.5rem;
+}
+.mapping-card.is-yes .mc-label { color:var(--green); }
+.mapping-card.is-no .mc-label { color:#d94040; }
+.mc-explain {
+  font-size:0.8rem; text-align:left; color:#555; display:none; margin-top:0.5rem;
+  padding-top:0.5rem; border-top:1px dashed var(--border-light);
+}
+.mc-explain.show { display:block; }
+
+/* ── BIJECTION TABLE ── */
+.bij-table {
+  width:100%; max-width:420px; margin:1rem auto; border-collapse:collapse;
+  font-family:'JetBrains Mono',monospace; font-size:0.9rem;
+}
+.bij-table th, .bij-table td {
+  padding:0.4em 1em; border:1px solid var(--border); text-align:center;
+}
+.bij-table th { background:var(--bg-warm); color:var(--text-muted); font-weight:500; font-size:0.8rem; }
+.bij-table .arrow { color:var(--blue); font-weight:600; }
+
+/* ── HLT WIDGET ── */
+.hlt-controls {
+  display:flex; align-items:center; gap:1rem; justify-content:center;
+  flex-wrap:wrap; margin-bottom:1rem;
+}
+.hlt-btn {
+  font-family:'JetBrains Mono',monospace; font-size:0.75rem;
+  padding:0.5em 1.2em; border-radius:6px; border:1px solid var(--border);
+  background:white; cursor:pointer; transition:all 0.2s;
+}
+.hlt-btn:hover { border-color:var(--purple); background:var(--purple-light); }
+.hlt-btn.active { border-color:var(--purple); background:var(--purple); color:white; }
+
+/* ── INVERSE STEPS ── */
+.inv-steps {
+  display:flex; flex-direction:column; gap:0.3rem; margin:1rem 0;
+  padding:1rem 1.5rem; background:white; border-radius:var(--radius);
+  border:1px solid var(--border-light);
+}
+.inv-step {
+  display:flex; align-items:baseline; gap:0.8rem; padding:0.3rem 0;
+}
+.inv-step-num {
+  font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:600;
+  color:var(--blue); background:var(--blue-light); width:24px; height:24px;
+  display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;
+}
+
+/* ── CARDINALITY VISUAL ── */
+.card-chain {
+  display:flex; align-items:center; gap:0.3rem; justify-content:center;
+  flex-wrap:wrap; margin:1.5rem 0; font-family:'JetBrains Mono',monospace; font-size:1rem;
+}
+.card-set {
+  padding:0.4em 0.8em; border-radius:8px; font-weight:600; white-space:nowrap;
+}
+.card-lt { color:var(--accent); font-weight:700; font-size:1.3em; }
+.card-eq { color:var(--green); font-weight:700; font-size:1.3em; }
+
+/* ── QUIZ ── */
+.quiz-option {
+  font-family:'JetBrains Mono',monospace; font-size:0.82rem;
+  padding:0.7em 1em; border:2px solid var(--border); border-radius:8px;
+  background:white; cursor:pointer; transition:all 0.2s; text-align:center;
+}
+.quiz-option:hover { border-color:var(--purple); background:var(--purple-light); }
+.quiz-option.correct { border-color:var(--green); background:var(--green-light); color:var(--green); }
+.quiz-option.wrong { border-color:#d94040; background:#fef2f2; color:#d94040; }
+
+/* ── FOOTER ── */
+.footer {
+  text-align:center; padding:2rem; color:var(--text-light); font-size:0.82rem;
+  border-top:1px solid var(--border-light); margin-top:2rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width:640px) {
+  body { font-size:17px; }
+  .hero { padding:3rem 1.2rem 2.5rem; }
+  .hero h1 { font-size:1.8rem; }
+  .toc-card { flex-direction:column; align-items:flex-start; }
+  .container { padding:2rem 1rem 3rem; }
+  .box { padding:1.1rem 1.2rem; }
+  .section-header h2 { font-size:1.3rem; }
+  .mapping-row { gap:1rem; }
+  .mapping-card { width:100%; max-width:280px; }
+}
+
+h3.sub {
+  font-family:'Playfair Display',serif; margin:2rem 0 1rem; font-size:1.25rem; font-weight:700;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Math 101 · Fall 2025</div>
+    <h1>Lecture 03: <em>Types of Functions &amp; Infinity</em></h1>
+    <p class="hero-sub">Injective, surjective, bijective — the three personality types of functions. Plus: are some infinities bigger than others?</p>
+  </div>
+</header>
+
+<!-- ═══════════ TOC ═══════════ -->
+<nav class="toc-bar">
+  <div class="toc-card">
+    <span class="toc-label">Jump to</span>
+    <a href="#sec-injective">Injective</a>
+    <a href="#sec-surjective">Surjective</a>
+    <a href="#sec-bijective">Bijective</a>
+    <a href="#sec-inverses">Inverses</a>
+    <a href="#sec-infinity">Infinity</a>
+    <a href="#sec-practice">Practice</a>
+  </div>
+</nav>
+
+<!-- ═══════════ CONTENT ═══════════ -->
+<main class="container">
+
+<!-- ──────── §1 INJECTIVE ──────── -->
+<section class="section" id="sec-injective">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§1</span>
+    <h2>Injective (One-to-One) Functions</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="box def">
+      <span class="box-label">Definition — Injective</span>
+      A function <em>f</em> : A → B is <strong>injective</strong> (or <strong>one-to-one</strong>) if no output comes from two different inputs.
+      <br><br>
+      Formally: if <em>x</em> ≠ <em>y</em>, then <em>f</em>(<em>x</em>) ≠ <em>f</em>(<em>y</em>).
+    </div>
+
+    <p>Think of it this way: an injective function never "reuses" an output. Every output in the range has a <em>unique</em> input pointing to it.</p>
+
+    <div class="mapping-row">
+      <div class="mapping-card is-yes" onclick="this.querySelector('.mc-explain').classList.toggle('show')">
+        <svg viewBox="0 0 180 130" width="170" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="65" rx="28" ry="45" fill="#d4eddc" stroke="#3a7a54" stroke-width="1.5"/>
+          <ellipse cx="140" cy="65" rx="28" ry="45" fill="#d4eddc" stroke="#3a7a54" stroke-width="1.5"/>
+          <circle cx="40" cy="40" r="3.5" fill="#2a2520"/><circle cx="40" cy="65" r="3.5" fill="#2a2520"/><circle cx="40" cy="90" r="3.5" fill="#2a2520"/>
+          <circle cx="140" cy="35" r="3.5" fill="#2a2520"/><circle cx="140" cy="55" r="3.5" fill="#2a2520"/><circle cx="140" cy="75" r="3.5" fill="#2a2520"/><circle cx="140" cy="95" r="3.5" fill="#aaa"/>
+          <line x1="44" y1="40" x2="136" y2="35" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="65" x2="136" y2="55" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="90" x2="136" y2="75" stroke="#2a2520" stroke-width="1.2"/>
+        </svg>
+        <div class="mc-label" style="color:var(--green);">✓ INJECTIVE</div>
+        <div class="mc-explain">Each input maps to a <em>different</em> output. One element in B has no arrow pointing to it — that's okay for injectivity.</div>
+      </div>
+      <div class="mapping-card is-no" onclick="this.querySelector('.mc-explain').classList.toggle('show')">
+        <svg viewBox="0 0 180 130" width="170" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="65" rx="28" ry="45" fill="#fef2f2" stroke="#d94040" stroke-width="1.5"/>
+          <ellipse cx="140" cy="65" rx="28" ry="45" fill="#fef2f2" stroke="#d94040" stroke-width="1.5"/>
+          <circle cx="40" cy="40" r="3.5" fill="#2a2520"/><circle cx="40" cy="65" r="3.5" fill="#2a2520"/><circle cx="40" cy="90" r="3.5" fill="#2a2520"/>
+          <circle cx="140" cy="45" r="3.5" fill="#2a2520"/><circle cx="140" cy="70" r="3.5" fill="#2a2520"/><circle cx="140" cy="95" r="3.5" fill="#aaa"/>
+          <line x1="44" y1="40" x2="136" y2="45" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="65" x2="136" y2="70" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="90" x2="136" y2="70" stroke="#d94040" stroke-width="1.8"/>
+        </svg>
+        <div class="mc-label" style="color:#d94040;">✗ NOT INJECTIVE</div>
+        <div class="mc-explain">Two different inputs (2nd and 3rd) both map to the same output. That's a collision — injectivity fails.</div>
+      </div>
+    </div>
+
+    <h3 class="sub">The Horizontal Line Test</h3>
+
+    <div class="box def">
+      <span class="box-label">Horizontal Line Test</span>
+      If <strong>any</strong> horizontal line intersects the graph of <em>f</em> at <strong>more than one point</strong>, then <em>f</em> is <strong>not</strong> injective.
+    </div>
+
+    <p>This is the graphical version of checking for "collisions." A horizontal line at height <em>d</em> represents the equation <em>f</em>(<em>x</em>) = <em>d</em>. If it crosses the graph twice, two different <em>x</em>-values give the same output.</p>
+
+    <!-- Interactive HLT widget -->
+    <div class="widget">
+      <div class="widget-title">Interactive — Horizontal Line Test</div>
+      <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.8rem; text-align:center;">Choose a function, then drag on the graph to move the horizontal test line.</p>
+      <div class="hlt-controls">
+        <button class="hlt-btn active" onclick="setHLTFunc(0,this)">x²</button>
+        <button class="hlt-btn" onclick="setHLTFunc(1,this)">x³</button>
+        <button class="hlt-btn" onclick="setHLTFunc(2,this)">|x|</button>
+        <button class="hlt-btn" onclick="setHLTFunc(3,this)">sin(x)</button>
+        <button class="hlt-btn" onclick="setHLTFunc(4,this)">eˣ</button>
+      </div>
+      <canvas class="graph-canvas" id="hltCanvas" width="520" height="520"></canvas>
+      <div id="hltVerdict" style="text-align:center; font-family:'JetBrains Mono',monospace; font-size:0.85rem; margin-top:0.8rem; min-height:1.5em;"></div>
+    </div>
+
+    <h3 class="sub">Proving Injectivity Algebraically</h3>
+
+    <div class="box logic">
+      <span class="box-label">Logic Trick — Contrapositive</span>
+      The statement "if <em>x</em> ≠ <em>y</em> then <em>f</em>(<em>x</em>) ≠ <em>f</em>(<em>y</em>)" is logically equivalent to its <strong>contrapositive</strong>:
+      <div class="math-block" style="font-size:1.1em;">
+        if <em>f</em>(<em>x</em>) = <em>f</em>(<em>y</em>), &ensp;then &ensp;<em>x</em> = <em>y</em>
+      </div>
+      This contrapositive form is usually <strong>easier to prove</strong>: assume the outputs are equal, then show the inputs must be equal.
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Example — Is f(x) = x² injective on ℝ?</span>
+      <strong>Attempt:</strong> Assume <em>f</em>(<em>x</em>) = <em>f</em>(<em>y</em>), i.e., <em>x</em>² = <em>y</em>².
+      <br>Then <em>x</em>² − <em>y</em>² = 0, so (<em>x</em> − <em>y</em>)(<em>x</em> + <em>y</em>) = 0.
+      <br>This gives <em>x</em> = <em>y</em> &ensp;or&ensp; <em>x</em> = −<em>y</em>.
+      <br><br>
+      Since we can't conclude <em>x</em> = <em>y</em> (we might have <em>x</em> = −<em>y</em> instead), <strong><em>f</em> is not injective on ℝ</strong>.
+      <br><br>
+      <strong>Concrete counterexample:</strong> <em>f</em>(2) = 4 = <em>f</em>(−2), but 2 ≠ −2.
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Example — What about f : [0, ∞) → ℝ, f(x) = x² ?</span>
+      Now assume <em>f</em>(<em>x</em>) = <em>f</em>(<em>y</em>) with <em>x</em>, <em>y</em> ≥ 0.
+      <br>Again (<em>x</em> − <em>y</em>)(<em>x</em> + <em>y</em>) = 0.
+      <br>Since <em>x</em>, <em>y</em> ≥ 0, we know <em>x</em> + <em>y</em> ≥ 0, so <em>x</em> + <em>y</em> = 0 only if <em>x</em> = <em>y</em> = 0.
+      <br>In either case, <em>x</em> = <em>y</em>. &ensp; <strong>✓ Injective!</strong>
+      <br><br>
+      <em style="color:var(--text-muted);">The domain matters! Restricting to non-negative numbers kills the symmetry that caused collisions.</em>
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Example — f(x) = |x| is not injective</span>
+      The absolute value function maps both <em>x</em> and −<em>x</em> to the same output. For instance, |3| = 3 = |−3|.
+      <br><br>
+      Graphically, the V-shape fails the horizontal line test — any horizontal line above the vertex hits the graph twice.
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §2 SURJECTIVE ──────── -->
+<section class="section" id="sec-surjective">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§2</span>
+    <h2>Surjective (Onto) Functions</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="box def">
+      <span class="box-label">Definition — Surjective</span>
+      A function <em>f</em> : A → B is <strong>surjective</strong> (or <strong>onto</strong>) if every element in B is an actual output. That is:
+      <div class="math-block">B = Range(<em>f</em>)</div>
+      In other words, every element of B has <em>at least one</em> input mapping to it — no element of B is "left out."
+    </div>
+
+    <div class="mapping-row">
+      <div class="mapping-card is-no" onclick="this.querySelector('.mc-explain').classList.toggle('show')">
+        <svg viewBox="0 0 180 130" width="170" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="65" rx="28" ry="45" fill="#fef2f2" stroke="#d94040" stroke-width="1.5"/>
+          <ellipse cx="140" cy="65" rx="28" ry="45" fill="#fef2f2" stroke="#d94040" stroke-width="1.5"/>
+          <circle cx="40" cy="40" r="3.5" fill="#2a2520"/><circle cx="40" cy="65" r="3.5" fill="#2a2520"/><circle cx="40" cy="90" r="3.5" fill="#2a2520"/>
+          <circle cx="140" cy="35" r="3.5" fill="#2a2520"/><circle cx="140" cy="60" r="3.5" fill="#2a2520"/><circle cx="140" cy="85" r="3.5" fill="#d94040"/>
+          <line x1="44" y1="40" x2="136" y2="35" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="65" x2="136" y2="60" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="90" x2="136" y2="60" stroke="#2a2520" stroke-width="1.2"/>
+          <text x="155" y="89" font-size="8" fill="#d94040">lonely!</text>
+        </svg>
+        <div class="mc-label" style="color:#d94040;">✗ NOT SURJECTIVE</div>
+        <div class="mc-explain">The bottom element of B has no arrow pointing to it — it's never an output. So range ≠ B.</div>
+      </div>
+      <div class="mapping-card is-yes" onclick="this.querySelector('.mc-explain').classList.toggle('show')">
+        <svg viewBox="0 0 180 130" width="170" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="65" rx="28" ry="45" fill="#d4eddc" stroke="#3a7a54" stroke-width="1.5"/>
+          <ellipse cx="140" cy="65" rx="28" ry="45" fill="#d4eddc" stroke="#3a7a54" stroke-width="1.5"/>
+          <circle cx="40" cy="35" r="3.5" fill="#2a2520"/><circle cx="40" cy="55" r="3.5" fill="#2a2520"/><circle cx="40" cy="75" r="3.5" fill="#2a2520"/><circle cx="40" cy="95" r="3.5" fill="#2a2520"/>
+          <circle cx="140" cy="40" r="3.5" fill="#2a2520"/><circle cx="140" cy="65" r="3.5" fill="#2a2520"/><circle cx="140" cy="90" r="3.5" fill="#2a2520"/>
+          <line x1="44" y1="35" x2="136" y2="40" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="55" x2="136" y2="65" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="75" x2="136" y2="65" stroke="#2a2520" stroke-width="1.2"/>
+          <line x1="44" y1="95" x2="136" y2="90" stroke="#2a2520" stroke-width="1.2"/>
+        </svg>
+        <div class="mc-label" style="color:var(--green);">✓ SURJECTIVE</div>
+        <div class="mc-explain">Every element in B has at least one arrow pointing to it. It's fine that the middle element gets two arrows.</div>
+      </div>
+    </div>
+
+    <div class="box warning">
+      <span class="box-label">Key Insight — The co-domain matters!</span>
+      Surjectivity depends on what you <em>declare</em> as the co-domain B. The same formula can be surjective or not depending on B.
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Example — f(x) = x² with different co-domains</span>
+      <strong>f : ℝ → ℝ</strong>, f(x) = x² is <strong>NOT surjective</strong>: −1 ∈ ℝ has no input (since x² ≥ 0 always).
+      <br><br>
+      <strong>f : ℝ → [0, ∞)</strong>, f(x) = x² <strong>IS surjective</strong>: for any <em>y</em> ≥ 0, we can find <em>x</em> = √<em>y</em> with <em>f</em>(<em>x</em>) = <em>y</em>.
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Example — sin(x) and surjectivity</span>
+      <strong>f : ℝ → ℝ</strong>, f(x) = sin(x) is <strong>NOT surjective</strong>: the value 5 ∈ ℝ is never an output (since −1 ≤ sin(x) ≤ 1).
+      <br><br>
+      <strong>f : ℝ → [−1, 1]</strong>, f(x) = sin(x) <strong>IS surjective</strong>: every value in [−1, 1] gets hit.
+    </div>
+
+    <h3 class="sub">Counting Argument for Finite Sets</h3>
+
+    <p>For finite sets A and B with #A and #B elements:</p>
+
+    <div class="box aside">
+      <span class="box-label">Size constraints</span>
+      If <strong>#A &gt; #B</strong>, you <strong>can't have an injective</strong> map A → B (by the pigeonhole principle — too many inputs, not enough outputs).
+      <br><br>
+      If <strong>#A &lt; #B</strong>, you <strong>can't have a surjective</strong> map A → B (not enough inputs to cover every output).
+      <br><br>
+      For a function to be <em>both</em> injective and surjective, we need <strong>#A = #B</strong>.
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §3 BIJECTIVE ──────── -->
+<section class="section" id="sec-bijective">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§3</span>
+    <h2>Bijective Functions</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="box def">
+      <span class="box-label">Definition — Bijective</span>
+      A function <em>f</em> : A → B is <strong>bijective</strong> if it is <strong>both injective and surjective</strong>.
+      <br><br>
+      Every element of B is hit (surjective), and hit <strong>exactly once</strong> (injective). This creates a perfect one-to-one pairing between A and B.
+    </div>
+
+    <div class="mapping-row">
+      <div class="mapping-card is-yes" style="width:250px;" onclick="this.querySelector('.mc-explain').classList.toggle('show')">
+        <svg viewBox="0 0 200 140" width="200" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="45" cy="70" rx="30" ry="52" fill="#d0e2f4" stroke="#3a6ea5" stroke-width="1.5"/>
+          <ellipse cx="155" cy="70" rx="30" ry="52" fill="#d0e2f4" stroke="#3a6ea5" stroke-width="1.5"/>
+          <text x="45" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="#3a6ea5">A</text>
+          <text x="155" y="20" text-anchor="middle" font-size="12" font-weight="600" fill="#3a6ea5">B</text>
+          <circle cx="45" cy="40" r="3.5" fill="#2a2520"/><circle cx="45" cy="57" r="3.5" fill="#2a2520"/>
+          <circle cx="45" cy="74" r="3.5" fill="#2a2520"/><circle cx="45" cy="91" r="3.5" fill="#2a2520"/>
+          <circle cx="155" cy="40" r="3.5" fill="#2a2520"/><circle cx="155" cy="57" r="3.5" fill="#2a2520"/>
+          <circle cx="155" cy="74" r="3.5" fill="#2a2520"/><circle cx="155" cy="91" r="3.5" fill="#2a2520"/>
+          <line x1="49" y1="40" x2="151" y2="74" stroke="#3a6ea5" stroke-width="1.3"/>
+          <line x1="49" y1="57" x2="151" y2="40" stroke="#3a6ea5" stroke-width="1.3"/>
+          <line x1="49" y1="74" x2="151" y2="91" stroke="#3a6ea5" stroke-width="1.3"/>
+          <line x1="49" y1="91" x2="151" y2="57" stroke="#3a6ea5" stroke-width="1.3"/>
+          <text x="100" y="130" text-anchor="middle" font-size="11" font-weight="600" font-family="JetBrains Mono,monospace" fill="#3a6ea5">f</text>
+        </svg>
+        <div class="mc-label" style="color:var(--blue);">✓ BIJECTION</div>
+        <div class="mc-explain">Each element on the left pairs with exactly one on the right, and vice versa. A perfect matching!</div>
+      </div>
+    </div>
+
+    <p>Bijective functions are also called <strong>invertible functions</strong>, because you can "reverse the arrows" to get a well-defined function going back.</p>
+
+  </div>
+</section>
+
+<!-- ──────── §4 INVERSES ──────── -->
+<section class="section" id="sec-inverses">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§4</span>
+    <h2>Inverse Functions</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="box def">
+      <span class="box-label">Definition — Inverse Function</span>
+      If <em>f</em> : A → B is bijective, we can define <em>f</em><sup>−1</sup> : B → A by flipping inputs and outputs:
+      <div class="math-block"><em>f</em><sup>−1</sup>(<em>y</em>) = <em>x</em> &ensp;⟺&ensp; <em>f</em>(<em>x</em>) = <em>y</em></div>
+      The domains and ranges swap: &ensp; D<sub>f</sub> = R<sub>f<sup>−1</sup></sub> &ensp;and&ensp; R<sub>f</sub> = D<sub>f<sup>−1</sup></sub>
+    </div>
+
+    <h3 class="sub">How to Find an Inverse</h3>
+
+    <div class="inv-steps">
+      <div class="inv-step"><span class="inv-step-num">1</span> Write <em>y</em> = <em>f</em>(<em>x</em>).</div>
+      <div class="inv-step"><span class="inv-step-num">2</span> Interchange <em>x</em> and <em>y</em>.</div>
+      <div class="inv-step"><span class="inv-step-num">3</span> Solve for <em>y</em> in terms of <em>x</em>.</div>
+      <div class="inv-step"><span class="inv-step-num">4</span> That solved <em>y</em> is your <em>f</em><sup>−1</sup>(<em>x</em>).</div>
+    </div>
+
+    <div class="box example">
+      <span class="box-label">Worked Example — f(x) = x/(x+1)</span>
+      <strong>Find</strong> <em>f</em><sup>−1</sup>, and find D<sub>f</sub>, R<sub>f</sub>, D<sub>f<sup>−1</sup></sub>, R<sub>f<sup>−1</sup></sub>.
+
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show full solution ▾</button>
+      <div class="reveal-content">
+        <strong>Domain of f:</strong> &ensp; D<sub>f</sub> = ℝ \ {−1} &ensp;(denominator ≠ 0).
+        <br><br>
+        <strong>Step 1:</strong> &ensp; <em>y</em> = <em>x</em> / (<em>x</em> + 1)
+        <br><strong>Step 2:</strong> &ensp; Swap: <em>x</em> = <em>y</em> / (<em>y</em> + 1)
+        <br><strong>Step 3:</strong> &ensp; Solve for <em>y</em>:
+        <div style="margin-left:2rem;">
+          <em>x</em>(<em>y</em> + 1) = <em>y</em><br>
+          <em>xy</em> + <em>x</em> = <em>y</em><br>
+          <em>y</em> − <em>xy</em> = <em>x</em><br>
+          <em>y</em>(1 − <em>x</em>) = <em>x</em><br>
+          <em>y</em> = <em>x</em> / (1 − <em>x</em>)
+        </div>
+        <br>
+        <strong>Result:</strong>
+        <div class="math-block" style="font-weight:600; color:var(--blue);">
+          <em>f</em><sup>−1</sup>(<em>x</em>) = <em>x</em> / (1 − <em>x</em>)
+        </div>
+        <strong>Summary:</strong>
+        <br>D<sub>f</sub> = ℝ \ {−1} = R<sub>f<sup>−1</sup></sub>
+        <br>R<sub>f</sub> = ℝ \ {1} = D<sub>f<sup>−1</sup></sub>
+      </div>
+    </div>
+
+    <div class="box fun">
+      <span class="box-label">Interesting Fact — Graphing Inverses</span>
+      The graph of <em>f</em><sup>−1</sup> is the <strong>reflection</strong> of the graph of <em>f</em> across the line <em>y</em> = <em>x</em>.
+      <br><br>
+      <em>Why?</em> If the point (<em>a</em>, <em>b</em>) is on the graph of <em>f</em> (meaning <em>f</em>(<em>a</em>) = <em>b</em>), then (<em>b</em>, <em>a</em>) is on the graph of <em>f</em><sup>−1</sup> (meaning <em>f</em><sup>−1</sup>(<em>b</em>) = <em>a</em>). Swapping coordinates is exactly what reflecting over <em>y</em> = <em>x</em> does.
+    </div>
+
+    <!-- Interactive inverse graph -->
+    <div class="widget">
+      <div class="widget-title">Interactive — Function &amp; Its Inverse</div>
+      <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.8rem; text-align:center;">See how <em>f</em>(x) = x/(x+1) and its inverse reflect across y = x.</p>
+      <canvas class="graph-canvas" id="invCanvas" width="520" height="520"></canvas>
+      <div style="display:flex; justify-content:center; gap:1.5rem; margin-top:0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem;">
+        <span><span style="display:inline-block;width:16px;height:3px;background:#3a6ea5;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>f(x) = x/(x+1)</span>
+        <span><span style="display:inline-block;width:16px;height:3px;background:#c0543a;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>f⁻¹(x) = x/(1−x)</span>
+        <span><span style="display:inline-block;width:16px;height:3px;background:#ccc;vertical-align:middle;margin-right:4px;border-radius:2px;border-top:1px dashed #aaa;"></span>y = x</span>
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise — Find the inverse</span>
+      Find <em>f</em><sup>−1</sup> for <em>f</em>(<em>x</em>) = 2<em>x</em> + 5.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        <em>y</em> = 2<em>x</em> + 5 → swap: <em>x</em> = 2<em>y</em> + 5 → solve: <em>y</em> = (<em>x</em> − 5)/2.
+        <div class="math-block" style="font-weight:600; color:var(--green);"><em>f</em><sup>−1</sup>(<em>x</em>) = (<em>x</em> − 5) / 2</div>
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise — Find the inverse</span>
+      Find <em>f</em><sup>−1</sup> for <em>f</em>(<em>x</em>) = (3<em>x</em> − 1) / (<em>x</em> + 2).
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        Swap and solve: <em>x</em> = (3<em>y</em> − 1)/(<em>y</em> + 2) → <em>x</em>(<em>y</em> + 2) = 3<em>y</em> − 1 → <em>xy</em> + 2<em>x</em> = 3<em>y</em> − 1 → <em>y</em>(<em>x</em> − 3) = −1 − 2<em>x</em> → <em>y</em> = (−2<em>x</em> − 1)/(<em>x</em> − 3).
+        <div class="math-block" style="font-weight:600; color:var(--green);"><em>f</em><sup>−1</sup>(<em>x</em>) = (−2<em>x</em> − 1) / (<em>x</em> − 3) = (2<em>x</em> + 1) / (3 − <em>x</em>)</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §5 INFINITY ──────── -->
+<section class="section" id="sec-infinity">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§5</span>
+    <h2>Infinity &amp; Beyond — Cardinality</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <p>Here's where bijections become surprisingly powerful: they let us compare the <em>sizes</em> of infinite sets.</p>
+
+    <div class="box def">
+      <span class="box-label">Definition — Same Cardinality</span>
+      Two sets A and B have the <strong>same cardinality</strong> (same "size") if there exists a <strong>bijection</strong> <em>f</em> : A → B.
+      <br><br>We write #A = #B.
+    </div>
+
+    <h3 class="sub">ℕ and 𝕎 Have the Same Size</h3>
+
+    <p>Let ℕ = {1, 2, 3, …} and 𝕎 = {0, 1, 2, …} (the whole numbers). Even though 𝕎 has an "extra" element (zero), they have the same cardinality!</p>
+
+    <div class="box example">
+      <span class="box-label">Bijection ℕ → 𝕎</span>
+      Define <em>f</em>(<em>n</em>) = <em>n</em> − 1. This is a bijection:
+      <table class="bij-table">
+        <tr><th>n ∈ ℕ</th><th></th><th>f(n) ∈ 𝕎</th></tr>
+        <tr><td>1</td><td class="arrow">→</td><td>0</td></tr>
+        <tr><td>2</td><td class="arrow">→</td><td>1</td></tr>
+        <tr><td>3</td><td class="arrow">→</td><td>2</td></tr>
+        <tr><td>4</td><td class="arrow">→</td><td>3</td></tr>
+        <tr><td>⋮</td><td></td><td>⋮</td></tr>
+      </table>
+    </div>
+
+    <h3 class="sub">ℕ and ℤ Have the Same Size!</h3>
+
+    <p>This is more surprising: ℤ extends infinitely in <em>both</em> directions, yet it's "the same size" as ℕ.</p>
+
+    <div class="box example">
+      <span class="box-label">Bijection ℕ (starting from 0) → ℤ</span>
+      The trick is to interleave: send even numbers to non-negatives, odd numbers to negatives.
+      <div class="math-block" style="font-size:1em;">
+        <em>f</em>(<em>n</em>) = n/2 &ensp;if <em>n</em> is even, &emsp; <em>f</em>(<em>n</em>) = −(n+1)/2 &ensp;if <em>n</em> is odd
+      </div>
+      <table class="bij-table">
+        <tr><th>n</th><th></th><th>f(n) ∈ ℤ</th></tr>
+        <tr><td>0</td><td class="arrow">→</td><td>0</td></tr>
+        <tr><td>1</td><td class="arrow">→</td><td>−1</td></tr>
+        <tr><td>2</td><td class="arrow">→</td><td>1</td></tr>
+        <tr><td>3</td><td class="arrow">→</td><td>−2</td></tr>
+        <tr><td>4</td><td class="arrow">→</td><td>2</td></tr>
+        <tr><td>5</td><td class="arrow">→</td><td>−3</td></tr>
+        <tr><td>6</td><td class="arrow">→</td><td>3</td></tr>
+        <tr><td>⋮</td><td></td><td>⋮</td></tr>
+      </table>
+      <em style="color:var(--text-muted); font-size:0.9rem;">Like a zipper — weaving back and forth captures every integer!</em>
+    </div>
+
+    <h3 class="sub">The Hierarchy of Infinities</h3>
+
+    <p>The cardinality of ℕ is denoted <strong>ℵ₀</strong> ("aleph-naught"). Sets with this cardinality are called <strong>countably infinite</strong>.</p>
+
+    <div class="box fun">
+      <span class="box-label">Surprising fact</span>
+      The rationals ℚ also have cardinality ℵ₀ — same size as ℕ! (This can be shown using a clever diagonal argument.)
+      <br><br>
+      So ℕ, 𝕎, ℤ, and ℚ are all the same "size" of infinity.
+    </div>
+
+    <p>But not all infinities are equal…</p>
+
+    <div class="box def">
+      <span class="box-label">Cantor's Theorem</span>
+      <strong>Georg Cantor</strong> proved that the irrationals ℚ<sup>c</sup> (and therefore ℝ) have a <strong>strictly larger</strong> cardinality than ℕ.
+      <div class="math-block">#ℚ<sup>c</sup> = #ℝ &gt; #ℕ</div>
+      The cardinality of ℝ is denoted <strong>𝔠</strong> ("the continuum"). In fact, #(0,1) = #ℝ = 𝔠.
+    </div>
+
+    <div class="card-chain">
+      <span class="card-set" style="background:var(--blue-light); color:var(--blue);">ℕ, ℤ, ℚ</span>
+      <span class="card-lt">&lt;</span>
+      <span class="card-set" style="background:var(--accent-light); color:var(--accent);">ℝ, ℚ<sup>c</sup>, (0,1)</span>
+      <span class="card-lt">&lt;</span>
+      <span class="card-set" style="background:var(--purple-light); color:var(--purple);">𝒫(ℝ)</span>
+      <span class="card-lt">&lt;</span>
+      <span style="color:var(--text-muted);">⋯</span>
+    </div>
+    <p style="text-align:center; font-size:0.85rem; color:var(--text-muted);">
+      cardinality ℵ₀ &emsp;&emsp;&emsp;&emsp;&emsp; cardinality 𝔠 = 2<sup>ℵ₀</sup> &emsp;&emsp;&emsp; and bigger…
+    </p>
+
+    <div class="box fun">
+      <span class="box-label">Cantor's Power Set Theorem</span>
+      For <em>any</em> set A: &ensp; <strong>#A &lt; #𝒫(A)</strong>, where 𝒫(A) is the power set (set of all subsets) of A.
+      <br><br>
+      This means there's <strong>no biggest infinity</strong>! You can always build a bigger one:
+      <div class="math-block" style="font-size:1em;">
+        ℵ₀ &lt; 2<sup>ℵ₀</sup> &lt; 2<sup>2<sup>ℵ₀</sup></sup> &lt; 2<sup>2<sup>2<sup>ℵ₀</sup></sup></sup> &lt; ⋯
+      </div>
+      A never-ending chain of infinities!
+    </div>
+
+    <div class="box aside">
+      <span class="box-label">The Continuum Hypothesis</span>
+      <em>Is there an infinity "between" ℵ₀ and 𝔠?</em>
+      <br><br>
+      This question, known as the <strong>Continuum Hypothesis</strong>, was the first of Hilbert's famous 23 problems (1900). In 1963, Paul Cohen proved that this question is <strong>independent of the standard axioms of mathematics</strong> — it can be neither proved nor disproved! One of the most remarkable results in all of mathematics.
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Fun Exercises from the Lecture</span>
+      i) Can you find a bijective function from (0, 1) to (0, 2025)?
+      <br>ii) Can you find a bijection from (0, 1) to [0, 1]?
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show hints ▾</button>
+      <div class="reveal-content">
+        <strong>i)</strong> Linear scaling works: <em>f</em>(<em>x</em>) = 2025<em>x</em>. This maps (0,1) bijectively onto (0, 2025).
+        <br><br>
+        <strong>ii)</strong> This is much trickier! A simple linear map won't work (it would map open endpoints to open endpoints). You need a clever construction — the standard approach uses a "Hilbert hotel" trick: handle a countable sequence of special points differently from the rest.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ──────── §6 PRACTICE ──────── -->
+<section class="section" id="sec-practice">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-num">§6</span>
+    <h2>Practice Problems</h2>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body">
+
+    <!-- Classification Quiz -->
+    <div class="widget">
+      <div class="widget-title">Quiz — Classify the Function</div>
+      <div id="classQuiz">
+        <div id="cqQuestion" style="text-align:center; font-size:1.1rem; font-weight:600; margin-bottom:1rem;"></div>
+        <div id="cqOptions" style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; max-width:420px; margin:0 auto;"></div>
+        <div id="cqFeedback" style="text-align:center; font-size:0.95rem; min-height:2.5em; margin-top:0.8rem; color:var(--text-muted);"></div>
+        <div style="text-align:center;">
+          <button id="cqNext" class="reveal-btn" style="display:none;" onclick="nextClassQ()">Next question →</button>
+        </div>
+        <div id="cqScore" style="text-align:center; font-size:1.1rem; font-weight:600; color:var(--purple);"></div>
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 1</span>
+      Prove algebraically that <em>f</em>(<em>x</em>) = 3<em>x</em> − 7 is injective on ℝ.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        Assume <em>f</em>(<em>x</em>) = <em>f</em>(<em>y</em>): &ensp; 3<em>x</em> − 7 = 3<em>y</em> − 7 → 3<em>x</em> = 3<em>y</em> → <em>x</em> = <em>y</em>. ✓
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 2</span>
+      Is <em>f</em> : ℝ → ℝ, <em>f</em>(<em>x</em>) = <em>x</em>³ injective? Surjective? Bijective?
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        <strong>Injective:</strong> If <em>x</em>³ = <em>y</em>³, then taking cube roots gives <em>x</em> = <em>y</em>. ✓
+        <br><strong>Surjective:</strong> For any <em>y</em> ∈ ℝ, <em>x</em> = ∛<em>y</em> gives <em>f</em>(<em>x</em>) = <em>y</em>. ✓
+        <br><strong>Bijective:</strong> Yes — it's both injective and surjective! ✓
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 3</span>
+      Find the inverse of <em>f</em>(<em>x</em>) = (2<em>x</em> + 1) / (3 − <em>x</em>). State the domains of <em>f</em> and <em>f</em><sup>−1</sup>.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        Swap: <em>x</em> = (2<em>y</em> + 1)/(3 − <em>y</em>) → <em>x</em>(3 − <em>y</em>) = 2<em>y</em> + 1 → 3<em>x</em> − <em>xy</em> = 2<em>y</em> + 1 → 3<em>x</em> − 1 = 2<em>y</em> + <em>xy</em> = <em>y</em>(2 + <em>x</em>) → <em>y</em> = (3<em>x</em> − 1)/(x + 2).
+        <div class="math-block" style="font-weight:600; color:var(--green);"><em>f</em><sup>−1</sup>(<em>x</em>) = (3<em>x</em> − 1) / (<em>x</em> + 2)</div>
+        D<sub>f</sub> = ℝ \ {3}, &ensp; D<sub>f<sup>−1</sup></sub> = ℝ \ {−2}.
+      </div>
+    </div>
+
+    <div class="box exercise">
+      <span class="box-label">Exercise 4</span>
+      Give an example of a function ℝ → ℝ that is surjective but not injective.
+      <button class="reveal-btn" onclick="toggleReveal(this)">Show solution ▾</button>
+      <div class="reveal-content">
+        <em>f</em>(<em>x</em>) = <em>x</em>³ − <em>x</em> works. It hits every real value (surjective) but, for example, <em>f</em>(0) = 0 = <em>f</em>(1) = <em>f</em>(−1), so it's not injective. Another classic example: <em>f</em>(<em>x</em>) = <em>x</em> · sin(<em>x</em>).
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  Math 101 · Fall 2025 · Lecture 03 Booklet
+</footer>
+
+<script>
+// ── Section toggle ──
+function toggleSection(header) { header.closest('.section').classList.toggle('collapsed'); }
+
+// ── Reveal ──
+function toggleReveal(btn) {
+  const c = btn.nextElementSibling;
+  c.classList.toggle('show');
+  btn.textContent = c.classList.contains('show') ? 'Hide ▴' : btn.textContent.includes('hint') ? 'Show hints ▾' : 'Show solution ▾';
+}
+
+// ══════════════════════════════════════════
+// HLT (Horizontal Line Test) Interactive
+// ══════════════════════════════════════════
+const hltCanvas = document.getElementById('hltCanvas');
+const hltCtx = hltCanvas.getContext('2d');
+let hltFunc = 0;
+let hltY = 260; // pixel y of horizontal line
+
+const hltFuncs = [
+  { name:'x²',    fn: x => x*x,          inj:false, label:'f(x) = x²' },
+  { name:'x³',    fn: x => x*x*x,        inj:true,  label:'f(x) = x³' },
+  { name:'|x|',   fn: x => Math.abs(x),   inj:false, label:'f(x) = |x|' },
+  { name:'sin(x)',fn: x => Math.sin(x),   inj:false, label:'f(x) = sin(x)' },
+  { name:'eˣ',    fn: x => Math.exp(x),   inj:true,  label:'f(x) = eˣ' },
+];
+
+function setHLTFunc(idx, btn) {
+  hltFunc = idx;
+  document.querySelectorAll('.hlt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  drawHLT();
+}
+
+function drawHLT() {
+  const W = hltCanvas.width, H = hltCanvas.height;
+  const cx = W/2, cy = H/2, scale = 50;
+  const f = hltFuncs[hltFunc];
+  hltCtx.clearRect(0,0,W,H);
+  hltCtx.fillStyle = '#fff';
+  hltCtx.fillRect(0,0,W,H);
+
+  // Grid
+  hltCtx.strokeStyle = '#f0ede8'; hltCtx.lineWidth = 1;
+  for (let i = -6; i <= 6; i++) {
+    const x = cx + i*scale, y = cy - i*scale;
+    hltCtx.beginPath(); hltCtx.moveTo(x,0); hltCtx.lineTo(x,H); hltCtx.stroke();
+    hltCtx.beginPath(); hltCtx.moveTo(0,y); hltCtx.lineTo(W,y); hltCtx.stroke();
+  }
+
+  // Axes
+  hltCtx.strokeStyle = '#2a2520'; hltCtx.lineWidth = 1.5;
+  hltCtx.beginPath(); hltCtx.moveTo(0,cy); hltCtx.lineTo(W,cy); hltCtx.stroke();
+  hltCtx.beginPath(); hltCtx.moveTo(cx,0); hltCtx.lineTo(cx,H); hltCtx.stroke();
+  hltCtx.fillStyle = '#918a85'; hltCtx.font = '11px JetBrains Mono,monospace'; hltCtx.textAlign = 'center';
+  for (let i = -5; i <= 5; i++) { if(i===0) continue; hltCtx.fillText(i, cx+i*scale, cy+16); }
+
+  // Function curve
+  hltCtx.strokeStyle = '#3a6ea5'; hltCtx.lineWidth = 2.5; hltCtx.beginPath();
+  let started = false;
+  for (let px = 0; px < W; px++) {
+    const x = (px - cx) / scale;
+    const y = f.fn(x);
+    const py = cy - y * scale;
+    if (py < -100 || py > H + 100) { started = false; continue; }
+    if (!started) { hltCtx.moveTo(px, py); started = true; }
+    else hltCtx.lineTo(px, py);
+  }
+  hltCtx.stroke();
+
+  // Horizontal test line
+  hltCtx.setLineDash([6,4]); hltCtx.strokeStyle = '#c0543a'; hltCtx.lineWidth = 1.5;
+  hltCtx.beginPath(); hltCtx.moveTo(0,hltY); hltCtx.lineTo(W,hltY); hltCtx.stroke();
+  hltCtx.setLineDash([]);
+
+  // Find intersections
+  const yVal = (cy - hltY) / scale;
+  const inters = [];
+  for (let px = 1; px < W; px++) {
+    const x1 = (px-1-cx)/scale, x2 = (px-cx)/scale;
+    const y1 = f.fn(x1), y2 = f.fn(x2);
+    if ((y1-yVal)*(y2-yVal) <= 0 && Math.abs(y1-y2) < 5) {
+      const t = (yVal-y1)/(y2-y1);
+      const ix = x1 + t*(x2-x1);
+      inters.push(cx + ix*scale);
+    }
+  }
+  // Draw intersection dots
+  inters.forEach(px => {
+    hltCtx.fillStyle = '#c0543a';
+    hltCtx.beginPath(); hltCtx.arc(px, hltY, 5, 0, Math.PI*2); hltCtx.fill();
+  });
+
+  // Label
+  hltCtx.font = '13px JetBrains Mono,monospace';
+  hltCtx.fillStyle = '#2a2520'; hltCtx.textAlign = 'left';
+  hltCtx.fillText(f.label, 12, 20);
+  hltCtx.fillStyle = '#c0543a';
+  hltCtx.fillText(`y = ${yVal.toFixed(2)}`, 12, 38);
+  hltCtx.fillText(`${inters.length} intersection${inters.length !== 1 ? 's' : ''}`, 12, 56);
+
+  // Verdict
+  const v = document.getElementById('hltVerdict');
+  if (inters.length > 1) {
+    v.innerHTML = `<span style="color:#d94040">✗ ${inters.length} intersections → NOT injective at this height</span>`;
+  } else if (inters.length === 1) {
+    v.innerHTML = `<span style="color:var(--green)">✓ 1 intersection — consistent with injectivity</span>`;
+  } else {
+    v.innerHTML = `<span style="color:var(--text-light)">0 intersections at this height</span>`;
+  }
+}
+
+hltCanvas.addEventListener('mousemove', e => {
+  const rect = hltCanvas.getBoundingClientRect();
+  hltY = (e.clientY - rect.top) * (hltCanvas.height / rect.height);
+  drawHLT();
+});
+hltCanvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const rect = hltCanvas.getBoundingClientRect();
+  hltY = (e.touches[0].clientY - rect.top) * (hltCanvas.height / rect.height);
+  drawHLT();
+}, {passive:false});
+
+drawHLT();
+
+// ══════════════════════════════════════════
+// Inverse function graph
+// ══════════════════════════════════════════
+const invCanvas = document.getElementById('invCanvas');
+const invCtx = invCanvas.getContext('2d');
+
+function drawInverse() {
+  const W = invCanvas.width, H = invCanvas.height;
+  const cx = W/2, cy = H/2, scale = 80;
+  invCtx.clearRect(0,0,W,H);
+  invCtx.fillStyle = '#fff';
+  invCtx.fillRect(0,0,W,H);
+
+  // Grid
+  invCtx.strokeStyle = '#f0ede8'; invCtx.lineWidth = 1;
+  for (let i = -4; i <= 4; i++) {
+    const x = cx+i*scale, y = cy-i*scale;
+    invCtx.beginPath(); invCtx.moveTo(x,0); invCtx.lineTo(x,H); invCtx.stroke();
+    invCtx.beginPath(); invCtx.moveTo(0,y); invCtx.lineTo(W,y); invCtx.stroke();
+  }
+
+  // Axes
+  invCtx.strokeStyle = '#2a2520'; invCtx.lineWidth = 1.5;
+  invCtx.beginPath(); invCtx.moveTo(0,cy); invCtx.lineTo(W,cy); invCtx.stroke();
+  invCtx.beginPath(); invCtx.moveTo(cx,0); invCtx.lineTo(cx,H); invCtx.stroke();
+  invCtx.fillStyle = '#918a85'; invCtx.font = '12px JetBrains Mono,monospace'; invCtx.textAlign = 'center';
+  for (let i = -3; i <= 3; i++) { if(i===0) continue; invCtx.fillText(i, cx+i*scale, cy+16); invCtx.fillText(i, cx-16, cy-i*scale+4); }
+
+  // y = x line
+  invCtx.setLineDash([6,6]); invCtx.strokeStyle = '#ccc'; invCtx.lineWidth = 1;
+  invCtx.beginPath(); invCtx.moveTo(0,H); invCtx.lineTo(W,0); invCtx.stroke();
+  invCtx.setLineDash([]);
+
+  // f(x) = x/(x+1), asymptote at x = -1, horizontal asymptote y = 1
+  // f inverse: x/(1-x), asymptote at x = 1, horizontal asymptote y = -1
+
+  function drawCurve(fn, color, asymptote) {
+    invCtx.strokeStyle = color; invCtx.lineWidth = 2.5;
+    invCtx.beginPath();
+    let started = false;
+    for (let px = 0; px < W; px += 0.5) {
+      const x = (px - cx) / scale;
+      if (Math.abs(x - asymptote) < 0.05) { started = false; continue; }
+      const y = fn(x);
+      const py = cy - y * scale;
+      if (py < -50 || py > H + 50) { started = false; continue; }
+      if (!started) { invCtx.moveTo(px, py); started = true; }
+      else invCtx.lineTo(px, py);
+    }
+    invCtx.stroke();
+  }
+
+  drawCurve(x => x/(x+1), '#3a6ea5', -1);
+  drawCurve(x => x/(1-x), '#c0543a', 1);
+
+  // Asymptote lines
+  invCtx.setLineDash([3,4]); invCtx.lineWidth = 1;
+  invCtx.strokeStyle = 'rgba(58,110,165,0.3)';
+  const ax1 = cx + (-1)*scale;
+  invCtx.beginPath(); invCtx.moveTo(ax1,0); invCtx.lineTo(ax1,H); invCtx.stroke();
+  const ay1 = cy - 1*scale;
+  invCtx.beginPath(); invCtx.moveTo(0,ay1); invCtx.lineTo(W,ay1); invCtx.stroke();
+
+  invCtx.strokeStyle = 'rgba(192,84,58,0.3)';
+  const ax2 = cx + 1*scale;
+  invCtx.beginPath(); invCtx.moveTo(ax2,0); invCtx.lineTo(ax2,H); invCtx.stroke();
+  const ay2 = cy - (-1)*scale;
+  invCtx.beginPath(); invCtx.moveTo(0,ay2); invCtx.lineTo(W,ay2); invCtx.stroke();
+  invCtx.setLineDash([]);
+}
+drawInverse();
+
+// ══════════════════════════════════════════
+// Classification Quiz
+// ══════════════════════════════════════════
+const classQs = [
+  { q:'f : ℝ → ℝ, f(x) = 2x + 3', opts:['Injective only','Surjective only','Bijective','Neither'], ans:2,
+    explain:'Linear with nonzero slope: passes HLT (injective) and hits all of ℝ (surjective).' },
+  { q:'f : ℝ → ℝ, f(x) = x²', opts:['Injective only','Surjective only','Bijective','Neither'], ans:3,
+    explain:'f(2) = f(−2) → not injective. f(x) ≥ 0 → not surjective (−1 is never hit).' },
+  { q:'f : ℝ → [0,∞), f(x) = x²', opts:['Injective only','Surjective only','Bijective','Neither'], ans:1,
+    explain:'Still not injective (f(2)=f(−2)), but now surjective — every y ≥ 0 has an input.' },
+  { q:'f : [0,∞) → [0,∞), f(x) = x²', opts:['Injective only','Surjective only','Bijective','Neither'], ans:2,
+    explain:'On [0,∞), x² is injective (no ± issue) AND surjective onto [0,∞). Both → bijective!' },
+  { q:'f : ℝ → ℝ, f(x) = eˣ', opts:['Injective only','Surjective only','Bijective','Neither'], ans:0,
+    explain:'eˣ is strictly increasing (injective), but eˣ > 0 always, so negative reals are never outputs (not surjective).' },
+  { q:'f : ℝ → (0,∞), f(x) = eˣ', opts:['Injective only','Surjective only','Bijective','Neither'], ans:2,
+    explain:'Injective (strictly increasing) and now surjective onto (0,∞). Bijective!' },
+];
+
+let cqIdx = 0, cqCorrect = 0, cqAnswered = false;
+
+function renderClassQ() {
+  if (cqIdx >= classQs.length) {
+    document.getElementById('cqQuestion').textContent = '';
+    document.getElementById('cqOptions').innerHTML = '';
+    document.getElementById('cqFeedback').textContent = '';
+    document.getElementById('cqNext').style.display = 'none';
+    document.getElementById('cqScore').textContent = `You got ${cqCorrect} / ${classQs.length} correct!`;
+    return;
+  }
+  const q = classQs[cqIdx]; cqAnswered = false;
+  document.getElementById('cqQuestion').innerHTML =
+    `<span style="color:var(--text-muted);font-size:0.8rem;">Question ${cqIdx+1} of ${classQs.length}</span><br>${q.q}`;
+  const optsDiv = document.getElementById('cqOptions');
+  optsDiv.innerHTML = '';
+  q.opts.forEach((opt,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = opt;
+    btn.onclick = () => checkClassA(i);
+    optsDiv.appendChild(btn);
+  });
+  document.getElementById('cqFeedback').textContent = '';
+  document.getElementById('cqNext').style.display = 'none';
+  document.getElementById('cqScore').textContent = '';
+}
+
+function checkClassA(idx) {
+  if (cqAnswered) return; cqAnswered = true;
+  const q = classQs[cqIdx];
+  const btns = document.querySelectorAll('#cqOptions .quiz-option');
+  btns[q.ans].classList.add('correct');
+  if (idx === q.ans) {
+    cqCorrect++;
+    document.getElementById('cqFeedback').innerHTML =
+      `<span style="color:var(--green)">✓ Correct!</span> ${q.explain}`;
+  } else {
+    btns[idx].classList.add('wrong');
+    document.getElementById('cqFeedback').innerHTML =
+      `<span style="color:#d94040">✗ Not quite.</span> ${q.explain}`;
+  }
+  document.getElementById('cqNext').style.display = 'inline-flex';
+}
+function nextClassQ() { cqIdx++; renderClassQ(); }
+renderClassQ();
+</script>
+
+</body>
+</html>
